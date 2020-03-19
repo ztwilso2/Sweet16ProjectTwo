@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>
+        Study Buddies
+    </title>
+    <link rel="stylesheet" type="text/css" href="StyleSheet1.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+        var sessionId; 
+
+        function logOn() {
+            var webMethod = "ProjectServices.asmx/LogOn";
+            var uid = $("#userId").val();
+            var pass = $("#pass").val();
+            var parameters = "{\"uid\":\"" + encodeURI(uid) + "\",\"pass\":\"" + encodeURI(pass) + "\"}";
+
+
+
+            //jQuery ajax method
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d > -1) {
+                        sessionId = msg.d;
+                        localStorage.setItem("sessionId", msg.d); 
+                        window.location.assign("./homepage.html");
+                    }
+                    else {
+                        $("#errorMessage").html("Failed to log in. Please check your password and username.");
+                    }
+
+
+                },
+                error: function (e) {
+                    alert("this code will only execute if javascript is unable to access the webservice");
+                }
+            });
+        }
+
+        window.onload = function () {
+            document.getElementById("pass").addEventListener("keyup", function (event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault()
+                    document.getElementById("logOnButton").click();
+                }
+            });
+
+        }
+
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>StudyBuddies</h1>
+        <p>No More Studying Alone</p>
+    </div>
+    <div id="loginFormDiv">
+        <form id="loginForm">
+            <h1 id="titleText" style="color:rgb(128,0,0)">Study Buddies</h1>
+            <div id="loginInformation">
+                <table id="loginTable">
+                    <tr>
+                        <td>Username/Email:</td>
+                        <td><input type="text" id="userId" name="username" /></td>
+                    </tr>
+
+                    <tr>
+                        <td>Password:</td>
+                        <td><input type="password" id="pass" name="password" /></td>
+                    </tr>
+                    <tr>
+                        <td><a href="./registerpage.html">Create an Account</a></td>
+                        <td><button type="button" id="logOnButton" onclick="logOn()">Log In</button></td>
+                    </tr>
+                </table>
+            </div>
+        </form>
+    </div>
+    <div id="errorMessageDiv">
+        <p id="errorMessage"></p>
+    </div>
+</body>
+</html>

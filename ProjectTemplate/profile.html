@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>StudyBuddies</title>
+    <link rel="stylesheet" type="text/css" href="StyleSheet1.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+               
+        function printProfile() {
+            var webMethod = "ProjectServices.asmx/PersonalInfo";
+            var uid = localStorage.getItem("sessionId");
+            var parameters = "{\"sessionId\":\"" + encodeURI(uid) + "\"}";
+ 
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d.length > 0) {
+
+                        $("#printProfile").empty();
+
+                        profileArray = msg.d;
+
+                        for (var i = 0; i < profileArray.length; i++) {
+
+                            var event = "<div>" +
+                                "Name: " + profileArray[i].fName + " " + profileArray[i].lName + "<br>" +
+                                "School: " + profileArray[i].college + "<br>" +
+                                "Year: " + profileArray[i].year + "<br>" +
+                                "Campus: " + profileArray[i].campus + "<br>" +
+                                "</div>" +
+                                "<hr>"
+
+                            $("#printProfile").append(event);
+                        }
+                    }
+                }
+            })
+    }
+
+
+
+    </script>
+</head>
+<body onload="printProfile()">
+    <header>
+        <div class="header">
+            <h1>StudyBuddies</h1>
+            <p>No More Studying Alone</p>
+            <nav>
+                <ul>
+                    <li onclick="LogOff()"><a href="">Logout</a></li>
+                    <li><a href="homepage.html">Home</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <!--<li></li>-->
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="oval"><h3>Profile Picture</h3></div>
+    <div id="printProfile">
+        
+    </div>
+    <div id="report">
+        <ul class="reportButton">
+            <li><a href="reportProfile.html">Report</a></li>
+        </ul>
+    </div>
+</body>
+</html>
