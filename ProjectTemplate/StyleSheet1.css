@@ -1,6 +1,4 @@
-﻿/*Janelles code added*/
-
-/*both pages*/
+﻿/*both pages*/
 footer{ clear:both;
         text-align: center;
 }
@@ -52,13 +50,13 @@ footer{ clear:both;
 .header {
     padding: 30px; /* some padding */
     text-align: center; /* center the text */
-    background: #FFD700; /* gold background */
-    color: black; /* white text color */
+    background: #2f4f4f; /* gold background */
+    color: #808080; /* white text color */
 }
 
     /* Increase the font size of the <h1> element */
  .header h1 {
-        font-size: 40px;
+        font-size: 50px;
     }
 
  /*Homepage*/
