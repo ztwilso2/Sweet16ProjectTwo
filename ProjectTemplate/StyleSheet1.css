@@ -1,4 +1,7 @@
 ﻿/*both pages*/
+footer{ clear:both;
+        text-align: center;
+}
 
 /*Login Page CSS*/
 #loginFormDiv, #errorMessageDiv{
