@@ -26,6 +26,7 @@ footer{ clear:both;
 /*Register Page CSS*/
 #registerFormDiv {
     text-align: center;
+    background-color: #faf0e6;
 }
 #registerForm {
     display: inline-block;
@@ -33,7 +34,8 @@ footer{ clear:both;
 }
 #registerTable {
     text-align: left;
-   }
+    color: #808080;
+}
 
 #newSchoolSelection {
     width: 159px;
