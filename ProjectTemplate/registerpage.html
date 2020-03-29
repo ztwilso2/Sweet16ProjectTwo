@@ -13,14 +13,13 @@
             var webMethod = "ProjectServices.asmx/RequestAccount";
             var fName = $('#newFName').val();
             var lName = $('#newLName').val();
-            var userName = $('#newUserName').val();
-            var password = $('#newPassword').val();
             var email = $('#newEmail').val();
-            var year = $('#newSchoolYear').val();
-            var college = $('#newSchoolSelection').val();
-            var campus = $('#newCampusSelection').val();
-
-            var parameters = "{\"fName\":\"" + encodeURI(fName) + "\",\"lName\":\"" + encodeURI(lName) + "\",\"userName\":\"" + encodeURI(userName) + "\",\"password\":\"" + encodeURI(password) + "\",\"email\":\"" + encodeURI(email) + "\",\"year\":\"" + encodeURI(year) + "\",\"college\":\"" + encodeURI(college) + "\",\"campus\":\"" + encodeURI(campus) + "\"}";
+            var password = $('#newPassword').val();
+            var companyName = $('#newCompanyName').val();
+            var jobTitle = $('#newJobTitle').val();
+            var expertise = $('#newExpertiseLevel').val();
+            var programStatus = $('#newProgramStatus').val();
+            var parameters = "{\"fName\":\"" + encodeURI(fName) + "\",\"lName\":\"" + encodeURI(lName) + "\",\"email\":\"" + encodeURI(email) + "\",\"password\":\"" + encodeURI(password) + "\",\"companyName\":\"" + encodeURI(companyName) + "\",\"jobTitle\":\"" + encodeURI(jobTitle) + "\",\"expertise\":\"" + encodeURI(expertise) + "\",\"programStatus\":\"" + encodeURI(programStatus) + "\"}";
 
             $.ajax({
                 type: "POST",
@@ -70,23 +69,34 @@
                     <tr>
                         <td>Company Name</td>
                         <td>
-                          
+                            <input type="text" name="" id="newCompanyName">
                         </td>
                     </tr>
                     <tr>
                         <td>Job Title</td>
                         <td>
-                  
+                            <input type="text" name="" id="newJobTitle">
                         </td>
                     </tr>
                     <tr>
                         <td>Expertise</td>
                         <td>
-                            <select id="newCampusSelection">
+                            <select id="newExpertiseLevel">
                                 <option value=" "> </option>
-                                <option value="Tempe">Tempe</option>
-                                <option value="Polytechnic">Polytechnic</option>
-                            
+                                <option value="entryLevel">Entry Level</option>
+                                <option value="seniorLevel">Senior Level</option>
+                                <option value="manager">Manager</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Program Status</td>
+                        <td>
+                            <select id="newProgramStatus">
+                                <option value=" "> </option>
+                                <option value="mentee">Looking for a Mentor</option>
+                                <option value="mentor">Want to be a Mentor</option>
+                                <option value="mentorMentee">Both</option>
                             </select>
                         </td>
                     </tr>
