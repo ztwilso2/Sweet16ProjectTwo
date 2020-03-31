@@ -74,7 +74,7 @@ namespace ProjectTemplate
             //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
             //does is tell mySql server to return the primary key of the last inserted row.
             string sqlSelect = "insert into register2 (fname, lname, email, password, companyName, jobTitle, expertise, programStatus) " +
-                "values(@fnameValue, @lnameValue, @emailValue, @passwordValue, @companyNamelValue, @jobTitleValue, @expertiseValue, @programStatusValue); SELECT LAST_INSERT_ID();";
+                "values(@fnameValue, @lnameValue, @emailValue, @passwordValue, @companyNameValue, @jobTitleValue, @expertiseValue, @programStatusValue); SELECT LAST_INSERT_ID();";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -119,7 +119,7 @@ namespace ProjectTemplate
             int userId=-1;
 
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-            string sqlSelect = "SELECT idRegister FROM Register WHERE (email=@idValue and password=@passValue) or (userName=@idValue and password=@passValue);";
+            string sqlSelect = "SELECT idRegister2 FROM register2 WHERE (email=@idValue and password=@passValue);";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -134,9 +134,9 @@ namespace ProjectTemplate
 
             if (sqlDt.Rows.Count > 0)
             {
-                Session["id"] = sqlDt.Rows[0]["idRegister"];
+                Session["id"] = sqlDt.Rows[0]["idRegister2"];
                 //success = true;
-                userId = Convert.ToInt32(sqlDt.Rows[0]["idRegister"]);
+                userId = Convert.ToInt32(sqlDt.Rows[0]["idRegister2"]);
             }
 
             return userId;
