@@ -351,15 +351,15 @@ namespace ProjectTemplate
             //WE ONLY SHARE Events WITH LOGGED IN USERS!
             if (Session["id"] != null)
             {
-                DataTable sqlDt = new DataTable("Register");
+                DataTable sqlDt = new DataTable("register2");
 
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-                string sqlSelect = "select * from Register where @idRegisterValue = idRegister ";
+                string sqlSelect = "select * from register2 where @idregister2Value = idRegister2 ";
 
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
-                sqlCommand.Parameters.AddWithValue("@idRegisterValue", HttpUtility.UrlDecode(sessionId));
+                sqlCommand.Parameters.AddWithValue("@idregister2Value", HttpUtility.UrlDecode(sessionId));
                 //gonna use this to fill a data table
                 MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
                 //filling the data table
@@ -374,12 +374,12 @@ namespace ProjectTemplate
 
                     profile.Add(new Profile
                     {
-                        registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister"]),
+                        registerId2 = Convert.ToInt32(sqlDt.Rows[i]["idregister2"]),
                         fName = sqlDt.Rows[i]["fName"].ToString(),
                         lName = sqlDt.Rows[i]["lName"].ToString(),
-                        year = sqlDt.Rows[i]["year"].ToString(),
-                        college = sqlDt.Rows[i]["college"].ToString(),
-                        campus = sqlDt.Rows[i]["campus"].ToString()
+                        companyName = sqlDt.Rows[i]["companyName"].ToString(),
+                        jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
+                        expertise = sqlDt.Rows[i]["expertise"].ToString()
                     });
                 }
                 //convert the list of events to an array and return!
@@ -401,10 +401,10 @@ namespace ProjectTemplate
             //WE ONLY SHARE Events WITH LOGGED IN USERS!
             if (Session["id"] != null)
             {
-                DataTable sqlDt = new DataTable("Register");
+                DataTable sqlDt = new DataTable("register2");
 
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-                string sqlSelect = "select idRegister, fName, lName from Register;";
+                string sqlSelect = "select idRegister2, fName, lName from register2;";
 
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -423,12 +423,12 @@ namespace ProjectTemplate
 
                     profile.Add(new Profile
                     {
-                        registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister"]),
+                        registerId2 = Convert.ToInt32(sqlDt.Rows[i]["idregister2"]),
                         fName = sqlDt.Rows[i]["fName"].ToString(),
                         lName = sqlDt.Rows[i]["lName"].ToString(),
-                        year = "",
-                        college = "",
-                        campus = ""
+                        companyName = "",
+                        jobTitle = "",
+                        expertise = ""
                     });
                 }
                 //convert the list of events to an array and return!
@@ -443,6 +443,7 @@ namespace ProjectTemplate
 
         
     }
+
 }
  
 

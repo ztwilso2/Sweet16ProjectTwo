@@ -7,12 +7,12 @@ namespace ProjectTemplate
 {
     public class Profile
     {
-        public int registerId;
+        public int registerId2;
         public string fName;
         public string lName;
-        public string year;
-        public string college;
-        public string campus;
+        public string companyName;
+        public string jobTitle;
+        public string expertise;
 
     }
 }

@@ -7,12 +7,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script type="text/javascript">
-               
+
         function printProfile() {
             var webMethod = "ProjectServices.asmx/PersonalInfo";
             var uid = localStorage.getItem("sessionId");
             var parameters = "{\"sessionId\":\"" + encodeURI(uid) + "\"}";
- 
+
             $.ajax({
                 type: "POST",
                 url: webMethod,
@@ -30,9 +30,9 @@
 
                             var event = "<div>" +
                                 "Name: " + profileArray[i].fName + " " + profileArray[i].lName + "<br>" +
-                                "School: " + profileArray[i].college + "<br>" +
-                                "Year: " + profileArray[i].year + "<br>" +
-                                "Campus: " + profileArray[i].campus + "<br>" +
+                                "Company Name: " + profileArray[i].companyName + "<br>" +
+                                "Job Title: " + profileArray[i].jobTitle + "<br>" +
+                                "Expertise: " + profileArray[i].expertise + "<br>" +
                                 "</div>" +
                                 "<hr>"
 
@@ -41,17 +41,34 @@
                     }
                 }
             })
-    }
-
-
+        }
 
     </script>
+
+    <?php
+    $target_dir = "uploads/";
+    $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+    $uploadOk = 1;
+    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    // Check if image file is a actual image or fake image
+    if(isset($_POST["submit"])) {
+    $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+    if($check !== false) {
+    echo "File is an image - " . $check["mime"] . ".";
+    $uploadOk = 1;
+    } else {
+    echo "File is not an image.";
+    $uploadOk = 0;
+    }
+    }
+    >
+
 </head>
 <body onload="printProfile()">
     <header>
         <div class="header">
-            <h1>StudyBuddies</h1>
-            <p>No More Studying Alone</p>
+            <h1>MentorMe</h1>
+            <p>Mentoring for Professionals Everywhere</p>
             <nav>
                 <ul>
                     <li onclick="LogOff()"><a href="">Logout</a></li>
@@ -62,14 +79,16 @@
             </nav>
         </div>
     </header>
-    <div class="oval"><h3>Profile Picture</h3></div>
+    <div class="oval" id="profilePicture">
+        <h3>Profile Picture</h3>
+        <form action="" method="post" enctype="multipart/form-data">
+            <input type="file" name="myImage" value="" />
+            <input type="submit" name="submit_img" value="Upload" />
+        </form>
+    </div>
     <div id="printProfile">
-        
+
     </div>
-    <div id="report">
-        <ul class="reportButton">
-            <li><a href="reportProfile.html">Report</a></li>
-        </ul>
-    </div>
+
 </body>
 </html>
