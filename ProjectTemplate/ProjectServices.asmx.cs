@@ -361,10 +361,10 @@ namespace ProjectTemplate
             //WE ONLY SHARE Events WITH LOGGED IN USERS!
             if (Session["id"] != null)
             {
-                DataTable sqlDt = new DataTable("Register");
+                DataTable sqlDt = new DataTable("register2");
 
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-                string sqlSelect = "select * from Register where @idRegisterValue = idRegister ";
+                string sqlSelect = "select * from register2 where @idRegister2Value = idRegister2 ";
 
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -384,7 +384,7 @@ namespace ProjectTemplate
 
                     profile.Add(new Profile
                     {
-                        registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister"]),
+                        registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister2"]),
                         fName = sqlDt.Rows[i]["fName"].ToString(),
                         lName = sqlDt.Rows[i]["lName"].ToString(),
                         companyName = sqlDt.Rows[i]["companyName"].ToString(),
@@ -453,25 +453,24 @@ namespace ProjectTemplate
         //}
 
         
-        protected void UploadButton_Click(object sender, EventArgs e)
-        {
-            if (FileUploadControl.HasFile)
-            {
-                try
-                {
-                    string filename = Path.GetFileName(FileUploadControl.FileName);
-                    FileUploadControl.SaveAs(Server.MapPath("~/") + filename);
-                    StatusLabel.Text = "Upload status: File uploaded!";
-                }
-                catch (Exception ex)
-                {
-                    StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
-                }
-            }
-        }
+        //protected void UploadButton_Click(object sender, EventArgs e)
+        //{
+        //    if (FileUploadControl.HasFile)
+        //    {
+        //        try
+        //        {
+        //            string filename = Path.GetFileName(FileUploadControl.FileName);
+        //            FileUploadControl.SaveAs(Server.MapPath("~/") + filename);
+        //            StatusLabel.Text = "Upload status: File uploaded!";
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
+        //        }
+        //    }
+        //}
     }
 
->>>>>>> profile
     }
     
 
