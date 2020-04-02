@@ -16,5 +16,6 @@ namespace ProjectTemplate
         public string jobTitle;
         public string expertise;
         public string programStatus;
+        public string image;
     }
 }

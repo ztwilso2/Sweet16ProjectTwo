@@ -213,8 +213,10 @@ namespace ProjectTemplate
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
                 string sqlSelect = "select * from register2 where programStatus = 'mentorMentee' or programStatus = 'Want to be a mentor';";
 
+
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
 
                 //gonna use this to fill a data table
                 MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
@@ -238,7 +240,9 @@ namespace ProjectTemplate
                         companyName = sqlDt.Rows[i]["companyName"].ToString(),
                         jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
                         expertise = sqlDt.Rows[i]["expertise"].ToString(),
-                        programStatus = sqlDt.Rows[i]["programStatus"].ToString()
+                        programStatus = sqlDt.Rows[i]["programStatus"].ToString(),
+                        image = sqlDt.Rows[i]["image"].ToString()
+
                     });
                 }
 
@@ -251,6 +255,7 @@ namespace ProjectTemplate
                 return new Profile[0];
             }
         }
+
 
 
         ////Update the RSVP count for events
@@ -442,7 +447,10 @@ namespace ProjectTemplate
         //}
 
 
+        
+
     }
+
 }
  
 

@@ -41,7 +41,7 @@ footer{ clear:both;
 .header {
     padding: 30px; /* some padding */
     text-align: center; /* center the text */
-    background: #2f4f4f; /* gold background */
+    background: #204051; /* background */
     color: #808080; /* white text color */
 }
 
@@ -50,46 +50,98 @@ footer{ clear:both;
         font-size: 50px;
     }
 
- /*Homepage*/
-header {
-    overflow: auto;
-    padding-bottom: 20px;
+/*Homepage*/
+body {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 0;
+    margin: 0;
+    background-color: #f4f4f4;
 }
 
-header h1 {
-        text-align: center;
-        font-family: Rubik;
-        font-size: xx-large;
-        margin-left: 0px;
-        margin-bottom: 5px;
-    }
+/*global and can be out anywhere*/
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
 
-header nav ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        width: 30%;
-        float: right;
-        overflow: hidden;
-        background-color: #333;
-    }
+ul {
+    margin: 0;
+    padding: 0;
+}
 
-header nav li {
-        display: inline-block;
-        float: right;
-    }
+.button_1 {
+    height: 38px;
+    background: red;
+    border: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+    color: #ffffff;
+}
 
-header li a {
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 14px 20px;
+header {
+    background: #204051;
+    color: #ffffff;
+    padding-top: 30px;
+    min-height: 70px;
+    border-bottom: #3b6978 3px solid;
+}
+
+
+    header a {
+        color: #ffffff;
         text-decoration: none;
+        text-transform: uppercase;
+        font-size: 16px;
     }
 
-header li a:hover {
-            background-color: #111;
+
+    header li {
+        float: left;
+        display: inline;
+        padding: 0 20px 0 20px;
+    }
+
+    header #branding {
+        float: left;
+    }
+
+
+        header #branding h1 {
+            margin: 0;
         }
+
+    header nav {
+        float: right;
+        margin-top: 10px;
+    }
+
+    header a:hover {
+        color: #3b6978;
+        font-weight: bold;
+    }
+
+
+
+/*showcase*/
+#middlething {
+    min-height: 300px;
+    background: url('imageadd.png') no-repeat;
+    text-align: center;
+    color: #ffffff;
+}
+
+    #middlething h1 {
+        margin-top: 100px;
+        font-size: 55px;
+        margin-bottom: 10px;
+    }
+
+    #middlething p {
+        font-size: 20px;
+    }
 
 /*#layout {
     display: block;
@@ -97,7 +149,7 @@ header li a:hover {
 
 #create {
     width: 25%;
-    background: #ba454b;
+    background: #84a9ac;
     float: left;
     padding: 2%;
 }
@@ -108,11 +160,10 @@ h2 {
 
 #eventBar {
     width: 25%;
-    background: #ba454b;
+    background: #84a9ac;
     float: left;
     padding: 2%;
     clear: left;
-    
 }
 
 #newClassName, #newDate {
@@ -125,7 +176,7 @@ h2 {
 
 #eventsListDiv {
     float: right;
-    background: #a3a2a2;
+    background: #84a9ac;
     padding: 1%;
     width: 67%;
 }
@@ -164,7 +215,6 @@ section:after {
 .oval {
     height: 240px;
     width: 170px;
-    background-color: #a3a2a2;
     border-radius: 50%;
     text-align: center;
     margin: auto;
