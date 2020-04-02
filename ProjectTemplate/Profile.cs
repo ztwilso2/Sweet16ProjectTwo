@@ -10,9 +10,11 @@ namespace ProjectTemplate
         public int registerId;
         public string fName;
         public string lName;
-        public string year;
-        public string college;
-        public string campus;
-
+        public string email;
+        public string password;
+        public string companyName;
+        public string jobTitle;
+        public string expertise;
+        public string programStatus;
     }
 }

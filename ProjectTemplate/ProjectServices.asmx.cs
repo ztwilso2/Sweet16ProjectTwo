@@ -153,65 +153,65 @@ namespace ProjectTemplate
             return true;
         }
 
-        [WebMethod(EnableSession = true)]
-        public string NewEvent(string className, string desc, string date, string time, string location, string creatorId, string rsvpCount)
-        {
-            if (Session["id"] != null)
-            {
-                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-                //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
-                //does is tell mySql server to return the primary key of the last inserted row.
-                string sqlSelect = "insert into events (className, descr, date, time, location, creatorId, rsvpCount) " +
-                    "values(@classNameValue, @descValue, @dateValue, @timeValue, @locationValue, @creatorIdValue, @rsvpCountValue); SELECT LAST_INSERT_ID();";
+        //[WebMethod(EnableSession = true)]
+        //public string NewEvent(string className, string desc, string date, string time, string location, string creatorId, string rsvpCount)
+        //{
+        //    if (Session["id"] != null)
+        //    {
+        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+        //        //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
+        //        //does is tell mySql server to return the primary key of the last inserted row.
+        //        string sqlSelect = "insert into events (className, descr, date, time, location, creatorId, rsvpCount) " +
+        //            "values(@classNameValue, @descValue, @dateValue, @timeValue, @locationValue, @creatorIdValue, @rsvpCountValue); SELECT LAST_INSERT_ID();";
 
-                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
-                //sqlCommand.Parameters.AddWithValue("@idRegisterValue", HttpUtility.UrlDecode(idRegister));
-                sqlCommand.Parameters.AddWithValue("@classNameValue", HttpUtility.UrlDecode(className));
-                sqlCommand.Parameters.AddWithValue("@descValue", HttpUtility.UrlDecode(desc));
-                sqlCommand.Parameters.AddWithValue("@dateValue", HttpUtility.UrlDecode(date));
-                sqlCommand.Parameters.AddWithValue("@timeValue", HttpUtility.UrlDecode(time));
-                sqlCommand.Parameters.AddWithValue("@locationValue", HttpUtility.UrlDecode(location));
-                sqlCommand.Parameters.AddWithValue("@creatorIdValue", HttpUtility.UrlDecode(creatorId));
-                sqlCommand.Parameters.AddWithValue("@rsvpCountValue", HttpUtility.UrlDecode(rsvpCount));
-                sqlConnection.Open();
-                //we're using a try/catch so that if the query errors out we can handle it gracefully
-                //by closing the connection and moving on
-                try
-                {
-                    int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
-                    //here, you could use this accountID for additional queries regarding
-                    //the requested account.  Really this is just an example to show you
-                    //a query where you get the primary key of the inserted row back from
-                    //the database!
-                    sqlConnection.Close();
-                    return "success";
-                }
-                catch (Exception e)
-                {
-                    return "error" + e.Message;
-                }
-                //sqlConnection.Close();
-            }
-            else
-            {
-                return "Please log in";
-            }
-        }
+        //        //sqlCommand.Parameters.AddWithValue("@idRegisterValue", HttpUtility.UrlDecode(idRegister));
+        //        sqlCommand.Parameters.AddWithValue("@classNameValue", HttpUtility.UrlDecode(className));
+        //        sqlCommand.Parameters.AddWithValue("@descValue", HttpUtility.UrlDecode(desc));
+        //        sqlCommand.Parameters.AddWithValue("@dateValue", HttpUtility.UrlDecode(date));
+        //        sqlCommand.Parameters.AddWithValue("@timeValue", HttpUtility.UrlDecode(time));
+        //        sqlCommand.Parameters.AddWithValue("@locationValue", HttpUtility.UrlDecode(location));
+        //        sqlCommand.Parameters.AddWithValue("@creatorIdValue", HttpUtility.UrlDecode(creatorId));
+        //        sqlCommand.Parameters.AddWithValue("@rsvpCountValue", HttpUtility.UrlDecode(rsvpCount));
+        //        sqlConnection.Open();
+        //        //we're using a try/catch so that if the query errors out we can handle it gracefully
+        //        //by closing the connection and moving on
+        //        try
+        //        {
+        //            int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
+        //            //here, you could use this accountID for additional queries regarding
+        //            //the requested account.  Really this is just an example to show you
+        //            //a query where you get the primary key of the inserted row back from
+        //            //the database!
+        //            sqlConnection.Close();
+        //            return "success";
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            return "error" + e.Message;
+        //        }
+        //        //sqlConnection.Close();
+        //    }
+        //    else
+        //    {
+        //        return "Please log in";
+        //    }
+        //}
 
         //getEventInfo
         [WebMethod(EnableSession = true)]
-        public Event[] GetEvents()
+        public Profile[] GetProfiles()
         {
 
             //WE ONLY SHARE Events WITH LOGGED IN USERS!
             if (Session["id"] != null)
             {
-                DataTable sqlDt = new DataTable("events");
+                DataTable sqlDt = new DataTable("register2");
 
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-                string sqlSelect = "select * from events where curdate() <= date order by date asc";
+                string sqlSelect = "select * from register2 where programStatus = 'mentorMentee' or programStatus = 'Want to be a mentor';";
 
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -224,21 +224,21 @@ namespace ProjectTemplate
                 //loop through each row in the dataset, creating instances
                 //of our container class Event.  Fill each eveny with
                 //data from the rows, then dump them in a list.
-                List<Event> events = new List<Event>();
+                List<Profile> events = new List<Profile>();
                 for (int i = 0; i < sqlDt.Rows.Count; i++)
                 {
 
-                    events.Add(new Event
+                    events.Add(new Profile
                     {
-                        eventId = Convert.ToInt32(sqlDt.Rows[i]["idevents"]),
-                        className = sqlDt.Rows[i]["className"].ToString(),
-                        description = sqlDt.Rows[i]["descr"].ToString(),
-                        date = sqlDt.Rows[i]["date"].ToString(),
-                        time = sqlDt.Rows[i]["time"].ToString(),
-                        location = sqlDt.Rows[i]["location"].ToString(),
-                        creatorId = Convert.ToInt32(sqlDt.Rows[i]["creatorId"]),
-                        rsvpCount = Convert.ToInt32(sqlDt.Rows[i]["rsvpCount"])
-
+                        registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister2"]),
+                        fName = sqlDt.Rows[i]["fName"].ToString(),
+                        lName = sqlDt.Rows[i]["lName"].ToString(),
+                        email = sqlDt.Rows[i]["email"].ToString(),
+                        password = sqlDt.Rows[i]["password"].ToString(),
+                        companyName = sqlDt.Rows[i]["companyName"].ToString(),
+                        jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
+                        expertise = sqlDt.Rows[i]["expertise"].ToString(),
+                        programStatus = sqlDt.Rows[i]["programStatus"].ToString()
                     });
                 }
 
@@ -248,200 +248,200 @@ namespace ProjectTemplate
             else
             {
                 //if they're not logged in, return an empty event
-                return new Event[0];
-            }
-        }
-
-
-        //Update the RSVP count for events
-        [WebMethod(EnableSession = true)]
-        public Event[] GetRSVPCount(string eventId)
-        {
-
-            //WE ONLY SHARE Events WITH LOGGED IN USERS!
-            if (Session["id"] != null)
-            {
-                DataTable sqlDt = new DataTable("events");
-
-                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-                string sqlSelect = "select rsvpCount from events where idevents = @eventIdValue;";
-
-                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
-
-                sqlCommand.Parameters.AddWithValue("@eventIdValue", HttpUtility.UrlDecode(eventId));
-                //gonna use this to fill a data table
-                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
-                //filling the data table
-                sqlDa.Fill(sqlDt);
-
-                //loop through each row in the dataset, creating instances
-                //of our container class Event.  Fill each eveny with
-                //data from the rows, then dump them in a list.
-                List<Event> events = new List<Event>();
-                for (int i = 0; i < sqlDt.Rows.Count; i++)
-                {
-
-                    events.Add(new Event
-                    {
-                        rsvpCount = Convert.ToInt32(sqlDt.Rows[i]["rsvpCount"])
-                    });
-                }
-                //convert the list of events to an array and return!
-                return events.ToArray();
-            }
-            else
-            {
-                //if they're not logged in, return an empty event
-                return new Event[0];
-            }
-        }
-
-
-        //Update RSVP count
-        [WebMethod(EnableSession = true)]
-        public string UpdateRSVP(string eventId, string rsvpCount)
-        {
-            //WRAPPING THE WHOLE THING IN AN IF STATEMENT TO CHECK IF THEY ARE AN ADMIN!
-            if (Session["id"] != null)
-            {
-                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-                //this is a simple update, with parameters to pass in values
-                string sqlSelect = "update events set rsvpCount = @rsvpCountValue where idevents = @eventIdValue";
-
-                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
-
-                sqlCommand.Parameters.AddWithValue("@eventIdValue", HttpUtility.UrlDecode(eventId));
-                sqlCommand.Parameters.AddWithValue("@rsvpCountValue", HttpUtility.UrlDecode(rsvpCount));
-                
-
-                sqlConnection.Open();
-                //we're using a try/catch so that if the query errors out we can handle it gracefully
-                //by closing the connection and moving on
-                try
-                {
-           
-                    sqlCommand.ExecuteNonQuery();
-                    sqlConnection.Close();
-                    return "Success";
-                                                          
-                }
-                catch (Exception e)
-                {
-                    sqlConnection.Close();
-                    return "Failure";
-                }
-
-                
-
-            }
-            else
-            {
-                return "Log in please";
-            }
-        }
-
-
-        //getProfileInfo
-        [WebMethod(EnableSession = true)]
-        public Profile[] PersonalInfo(string sessionId)
-        {
-
-            //WE ONLY SHARE Events WITH LOGGED IN USERS!
-            if (Session["id"] != null)
-            {
-                DataTable sqlDt = new DataTable("Register");
-
-                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-                string sqlSelect = "select * from Register where @idRegisterValue = idRegister ";
-
-                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
-
-                sqlCommand.Parameters.AddWithValue("@idRegisterValue", HttpUtility.UrlDecode(sessionId));
-                //gonna use this to fill a data table
-                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
-                //filling the data table
-                sqlDa.Fill(sqlDt);
-
-                //loop through each row in the dataset, creating instances
-                //of our container class Event.  Fill each eveny with
-                //data from the rows, then dump them in a list.
-                List<Profile> profile = new List<Profile>();
-                for (int i = 0; i < sqlDt.Rows.Count; i++)
-                {
-
-                    profile.Add(new Profile
-                    {
-                        registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister"]),
-                        fName = sqlDt.Rows[i]["fName"].ToString(),
-                        lName = sqlDt.Rows[i]["lName"].ToString(),
-                        year = sqlDt.Rows[i]["year"].ToString(),
-                        college = sqlDt.Rows[i]["college"].ToString(),
-                        campus = sqlDt.Rows[i]["campus"].ToString()
-                    });
-                }
-                //convert the list of events to an array and return!
-                return profile.ToArray();
-            }
-            else
-            {
-                //if they're not logged in, return an empty event
                 return new Profile[0];
             }
         }
 
 
-        // Lists of all users for the homepage. 
-        [WebMethod(EnableSession = true)]
-        public Profile[] UserList()
-        {
+        ////Update the RSVP count for events
+        //[WebMethod(EnableSession = true)]
+        //public Event[] GetRSVPCount(string eventId)
+        //{
 
-            //WE ONLY SHARE Events WITH LOGGED IN USERS!
-            if (Session["id"] != null)
-            {
-                DataTable sqlDt = new DataTable("Register");
+        //    //WE ONLY SHARE Events WITH LOGGED IN USERS!
+        //    if (Session["id"] != null)
+        //    {
+        //        DataTable sqlDt = new DataTable("events");
 
-                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-                string sqlSelect = "select idRegister, fName, lName from Register;";
+        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+        //        string sqlSelect = "select rsvpCount from events where idevents = @eventIdValue;";
 
-                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
-                //gonna use this to fill a data table
-                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
-                //filling the data table
-                sqlDa.Fill(sqlDt);
+        //        sqlCommand.Parameters.AddWithValue("@eventIdValue", HttpUtility.UrlDecode(eventId));
+        //        //gonna use this to fill a data table
+        //        MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+        //        //filling the data table
+        //        sqlDa.Fill(sqlDt);
 
-                //loop through each row in the dataset, creating instances
-                //of our container class Event.  Fill each eveny with
-                //data from the rows, then dump them in a list.
-                List<Profile> profile = new List<Profile>();
-                for (int i = 0; i < sqlDt.Rows.Count; i++)
-                {
+        //        //loop through each row in the dataset, creating instances
+        //        //of our container class Event.  Fill each eveny with
+        //        //data from the rows, then dump them in a list.
+        //        List<Event> events = new List<Event>();
+        //        for (int i = 0; i < sqlDt.Rows.Count; i++)
+        //        {
 
-                    profile.Add(new Profile
-                    {
-                        registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister"]),
-                        fName = sqlDt.Rows[i]["fName"].ToString(),
-                        lName = sqlDt.Rows[i]["lName"].ToString(),
-                        year = "",
-                        college = "",
-                        campus = ""
-                    });
-                }
-                //convert the list of events to an array and return!
-                return profile.ToArray();
-            }
-            else
-            {
-                //if they're not logged in, return an empty event
-                return new Profile[0];
-            }
-        }
+        //            events.Add(new Event
+        //            {
+        //                rsvpCount = Convert.ToInt32(sqlDt.Rows[i]["rsvpCount"])
+        //            });
+        //        }
+        //        //convert the list of events to an array and return!
+        //        return events.ToArray();
+        //    }
+        //    else
+        //    {
+        //        //if they're not logged in, return an empty event
+        //        return new Event[0];
+        //    }
+        //}
 
-        
+
+        ////Update RSVP count
+        //[WebMethod(EnableSession = true)]
+        //public string UpdateRSVP(string eventId, string rsvpCount)
+        //{
+        //    //WRAPPING THE WHOLE THING IN AN IF STATEMENT TO CHECK IF THEY ARE AN ADMIN!
+        //    if (Session["id"] != null)
+        //    {
+        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+        //        //this is a simple update, with parameters to pass in values
+        //        string sqlSelect = "update events set rsvpCount = @rsvpCountValue where idevents = @eventIdValue";
+
+        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+        //        sqlCommand.Parameters.AddWithValue("@eventIdValue", HttpUtility.UrlDecode(eventId));
+        //        sqlCommand.Parameters.AddWithValue("@rsvpCountValue", HttpUtility.UrlDecode(rsvpCount));
+
+
+        //        sqlConnection.Open();
+        //        //we're using a try/catch so that if the query errors out we can handle it gracefully
+        //        //by closing the connection and moving on
+        //        try
+        //        {
+
+        //            sqlCommand.ExecuteNonQuery();
+        //            sqlConnection.Close();
+        //            return "Success";
+
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            sqlConnection.Close();
+        //            return "Failure";
+        //        }
+
+
+
+        //    }
+        //    else
+        //    {
+        //        return "Log in please";
+        //    }
+        //}
+
+
+        ////getProfileInfo
+        //[WebMethod(EnableSession = true)]
+        //public Profile[] PersonalInfo(string sessionId)
+        //{
+
+        //    //WE ONLY SHARE Events WITH LOGGED IN USERS!
+        //    if (Session["id"] != null)
+        //    {
+        //        DataTable sqlDt = new DataTable("Register");
+
+        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+        //        string sqlSelect = "select * from Register where @idRegisterValue = idRegister ";
+
+        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+        //        sqlCommand.Parameters.AddWithValue("@idRegisterValue", HttpUtility.UrlDecode(sessionId));
+        //        //gonna use this to fill a data table
+        //        MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+        //        //filling the data table
+        //        sqlDa.Fill(sqlDt);
+
+        //        //loop through each row in the dataset, creating instances
+        //        //of our container class Event.  Fill each eveny with
+        //        //data from the rows, then dump them in a list.
+        //        List<Profile> profile = new List<Profile>();
+        //        for (int i = 0; i < sqlDt.Rows.Count; i++)
+        //        {
+
+        //            profile.Add(new Profile
+        //            {
+        //                registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister"]),
+        //                fName = sqlDt.Rows[i]["fName"].ToString(),
+        //                lName = sqlDt.Rows[i]["lName"].ToString(),
+        //                year = sqlDt.Rows[i]["year"].ToString(),
+        //                college = sqlDt.Rows[i]["college"].ToString(),
+        //                campus = sqlDt.Rows[i]["campus"].ToString()
+        //            });
+        //        }
+        //        //convert the list of events to an array and return!
+        //        return profile.ToArray();
+        //    }
+        //    else
+        //    {
+        //        //if they're not logged in, return an empty event
+        //        return new Profile[0];
+        //    }
+        //}
+
+
+        //// Lists of all users for the homepage. 
+        //[WebMethod(EnableSession = true)]
+        //public Profile[] UserList()
+        //{
+
+        //    //WE ONLY SHARE Events WITH LOGGED IN USERS!
+        //    if (Session["id"] != null)
+        //    {
+        //        DataTable sqlDt = new DataTable("Register");
+
+        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+        //        string sqlSelect = "select idRegister, fName, lName from Register;";
+
+        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+        //        //gonna use this to fill a data table
+        //        MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+        //        //filling the data table
+        //        sqlDa.Fill(sqlDt);
+
+        //        //loop through each row in the dataset, creating instances
+        //        //of our container class Event.  Fill each eveny with
+        //        //data from the rows, then dump them in a list.
+        //        List<Profile> profile = new List<Profile>();
+        //        for (int i = 0; i < sqlDt.Rows.Count; i++)
+        //        {
+
+        //            profile.Add(new Profile
+        //            {
+        //                registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister"]),
+        //                fName = sqlDt.Rows[i]["fName"].ToString(),
+        //                lName = sqlDt.Rows[i]["lName"].ToString(),
+        //                year = "",
+        //                college = "",
+        //                campus = ""
+        //            });
+        //        }
+        //        //convert the list of events to an array and return!
+        //        return profile.ToArray();
+        //    }
+        //    else
+        //    {
+        //        //if they're not logged in, return an empty event
+        //        return new Profile[0];
+        //    }
+        //}
+
+
     }
 }
  

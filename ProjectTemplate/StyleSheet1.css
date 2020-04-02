@@ -37,17 +37,6 @@ footer{ clear:both;
     color: #808080;
 }
 
-#newSchoolSelection {
-    width: 159px;
-}
-
-#newSchoolYear {
-    width: 159px;
-}
-
-#newCampusSelection {
-    width: 159px;
-}
 
 .header {
     padding: 30px; /* some padding */
@@ -102,7 +91,7 @@ header li a:hover {
             background-color: #111;
         }
 
-#layout {
+/*#layout {
     display: block;
 }
 
@@ -170,7 +159,7 @@ section:after {
     content: "";
     display: table;
     clear: both;
-}
+}*/
 /*Profile*/
 .oval {
     height: 240px;

@@ -7,7 +7,7 @@
     
 </head>
 
-<body onload="currentDate();">
+<body>
     <header>
         <div class="header">
             <h1>MentorMe</h1>
@@ -24,94 +24,14 @@
     </header>
 
     <section id="layout">
-        <article id="create">
-            <h2>Create an Event:</h2>
+        
+            <h2>Available Mentors</h2>
             <form>
-                <table id="createForm">
-                    <tr>
-                        <td>Class Name</td>
-                        <td><input id="newClassName" type="text" /></td>
-                    </tr>
-                    <tr>
-                        <td>Description</td>
-                        <td>
-                            <select id="newDesc">
-                                <option value="Test Review">Test Review</option>
-                                <option value="Homework Review">Homework Review</option>
-                                <option value="Study Session">Study Session</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Date</td>
-                        <td>
-                            <input type="date" id="newDate" name="trip-start"
-                                   value=""
-                                   min="2020-02-02" max="2022-12-31">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Time</td>
-                        <td>
-                            <select id="newTime">
-                                <option value="7:30AM">7:30 AM</option>
-                                <option value="8:00AM">8:00 AM</option>
-                                <option value="8:30AM">8:30 AM</option>
-                                <option value="9:00AM">9:00 AM</option>
-                                <option value="9:30AM">9:30 AM</option>
-                                <option value="10:00AM">10:00 AM</option>
-                                <option value="10:30AM">10:30 AM</option>
-                                <option value="11:00AM">11:00 AM</option>
-                                <option value="11:30AM">11:30 AM</option>
-                                <option value="12:00PM">12:00 PM</option>
-                                <option value="12:30PM">12:30 PM</option>
-                                <option value="1:00PM">1:00 PM</option>
-                                <option value="1:30PM">1:30 PM</option>
-                                <option value="2:00PM">2:00 PM</option>
-                                <option value="2:30PM">2:30 PM</option>
-                                <option value="3:00PM">3:00 PM</option>
-                                <option value="3:30PM">3:30 PM</option>
-                                <option value="4:00PM">4:00 PM</option>
-                                <option value="4:30PM">4:30 PM</option>
-                                <option value="5:00PM">5:00 PM</option>
-                                <option value="5:30PM">5:30 PM</option>
-                                <option value="6:00PM">6:00 PM</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Location</td>
-                        <td>
-                            <select id="newLocation">
-                                <option value="WPC Starbucks">WPC Starbucks</option>
-                                <option value="MU Starbucks">MU Starbucks</option>
-                                <option value="Hayden Library">Hayden Library</option>
-                                <option value="Noble Library">Noble Library</option>
-                                <option value="Student Pavilion">Student Pavilion</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr><td><button type="button" onclick="newEvent()" id="createButton">Create</button> </td></tr>
-                </table>
+                <div id="mentorList">
 
+                </div>
             </form>
-        </article>
-
-        <article id="eventsListDiv">
-            <h2>Upcoming Events!</h2>
-            <div id="eventsList">
-
-            </div>
-        </article>
-
-
-        <aside id="eventBar">
-            <form action="/" method="post">
-                <h3>My Events:</h3>
-                <div id="myEventsList"></div>
-            </form>
-        </aside>
-
+                
     </section>
     <footer>
         <p>Made By: Sweet 16</p>
@@ -120,8 +40,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
 
-        document.addEventListener("load", loadEvents());
-        document.getElementById("createButton").addEventListener("click", loadEvents);
+        document.addEventListener("load", loadMentors());
+        //document.getElementById("createButton").addEventListener("click", loadEvents);
 
 
         //accessing the user ID for the session on each page You can use this format
@@ -140,79 +60,79 @@
 
 
 
-        function currentDate() {
-            var today = new Date();
-            var day = today.getDate()
-            var month = today.getMonth() + 1
-            var year = today.getFullYear()
+        //function currentDate() {
+        //   var today = new Date();
+        //    var day = today.getDate()
+        //    var month = today.getMonth() + 1
+        //    var year = today.getFullYear()
 
-            month = (month < 10 ? "0" : "") + month;
-            day = (day < 10 ? "0" : "") + day;
+        //    month = (month < 10 ? "0" : "") + month;
+        //    day = (day < 10 ? "0" : "") + day;
 
-            var date = year + "-" + month + "-" + day
+        //    var date = year + "-" + month + "-" + day
 
-            document.getElementById('newDate').value = date;
-        }
+        //    document.getElementById('newDate').value = date;
+        //}
 
-        var rsvpCount;
-        function RSVP(eventId) {
-            var webMethod = "ProjectServices.asmx/GetRSVPCount";
-            var parameters = "{\"eventId\":\"" + encodeURI(eventId) + "\"}";
+        //var rsvpCount;
+        //function RSVP(eventId) {
+        //    var webMethod = "ProjectServices.asmx/GetRSVPCount";
+        //    var parameters = "{\"eventId\":\"" + encodeURI(eventId) + "\"}";
             
-            $.ajax({
-                async: false,
-                type: "POST",
-                url: webMethod,
-                data: parameters,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (msg) {
-                    if (msg.d) {
+        //    $.ajax({
+        //        async: false,
+        //        type: "POST",
+        //        url: webMethod,
+        //        data: parameters,
+        //        contentType: "application/json; charset=utf-8",
+        //        dataType: "json",
+        //        success: function (msg) {
+        //            if (msg.d) {
                         
-                        rsvpCount = Number(msg.d[0].rsvpCount);
-                        rsvpCount++;
+        //                rsvpCount = Number(msg.d[0].rsvpCount);
+        //                rsvpCount++;
 
-                    }
-                    else {
-                        alert("Error")
-                    }
-                },
-                error: function (e) {
-                    alert("Error with the server. Please try again.");
-                }
-            });
+        //            }
+        //            else {
+        //                alert("Error")
+        //            }
+        //        },
+        //        error: function (e) {
+        //            alert("Error with the server. Please try again.");
+        //        }
+        //    });
 
             
 
-            var webMethod2 = "ProjectServices.asmx/UpdateRSVP";
-            var parameters2 = "{\"eventId\":\"" + encodeURI(eventId) + "\",\"rsvpCount\":\"" + encodeURI(rsvpCount) + "\"}";
+        //    var webMethod2 = "ProjectServices.asmx/UpdateRSVP";
+        //    var parameters2 = "{\"eventId\":\"" + encodeURI(eventId) + "\",\"rsvpCount\":\"" + encodeURI(rsvpCount) + "\"}";
 
-            $.ajax({
-                async: false,
-                type: "POST",
-                url: webMethod2,
-                data: parameters2,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (msg) {
-                    if (msg.d) {
+        //    $.ajax({
+        //        async: false,
+        //        type: "POST",
+        //        url: webMethod2,
+        //        data: parameters2,
+        //        contentType: "application/json; charset=utf-8",
+        //        dataType: "json",
+        //        success: function (msg) {
+        //            if (msg.d) {
                         
-                    }
-                    else {
-                        alert("Error")
-                    }
-                },
-                error: function (e) {
-                    alert("Error with the server. Please try again.");
-                }
-            });
+        //            }
+        //            else {
+        //                alert("Error")
+        //            }
+        //        },
+        //        error: function (e) {
+        //            alert("Error with the server. Please try again.");
+        //        }
+        //    });
 
-            loadEvents();
-            document.getElementById(eventId).disabled = true;
+        //    loadEvents();
+        //    document.getElementById(eventId).disabled = true;
          
-        }
+        //}
 
-        //LogOffFunction
+        ////LogOffFunction
         function LogOff() {
 
             var webMethod = "ProjectServices.asmx/LogOff";
@@ -238,62 +158,39 @@
             });
         }
 
-        function newEvent() {
-            var webMethod = "ProjectServices.asmx/NewEvent";
-            var creatorId = localStorage.getItem("sessionId");
-            var className = $('#newClassName').val();
-            var desc = $('#newDesc').val();
-            var date = $('#newDate').val();
-            var time = $('#newTime').val();
-            var location = $('#newLocation').val();
-            var rsvpCount = 0;
-            var parameters = "{\"className\":\"" + encodeURI(className) + "\",\"desc\":\"" + encodeURI(desc) + "\",\"date\":\"" + encodeURI(date) + "\",\"time\":\"" + encodeURI(time) + "\",\"location\":\"" + encodeURI(location) + "\",\"creatorId\":\"" + encodeURI(creatorId) + "\",\"rsvpCount\":\"" + encodeURI(rsvpCount) + "\"}";
-            $.ajax({
-                type: "POST",
-                url: webMethod,
-                data: parameters,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (msg) {
-                    alert("Event added.");
-                },
-                error: function (e) {
-                    alert("An error was encountered. Please try again.");
-                }
-            });
-        }
+        //function newEvent() {
+        //    var webMethod = "ProjectServices.asmx/NewEvent";
+        //    var creatorId = localStorage.getItem("sessionId");
+        //    var className = $('#newClassName').val();
+        //    var desc = $('#newDesc').val();
+        //    var date = $('#newDate').val();
+        //    var time = $('#newTime').val();
+        //    var location = $('#newLocation').val();
+        //    var rsvpCount = 0;
+        //    var parameters = "{\"className\":\"" + encodeURI(className) + "\",\"desc\":\"" + encodeURI(desc) + "\",\"date\":\"" + encodeURI(date) + "\",\"time\":\"" + encodeURI(time) + "\",\"location\":\"" + encodeURI(location) + "\",\"creatorId\":\"" + encodeURI(creatorId) + "\",\"rsvpCount\":\"" + encodeURI(rsvpCount) + "\"}";
+        //    $.ajax({
+        //        type: "POST",
+        //        url: webMethod,
+        //        data: parameters,
+        //        contentType: "application/json; charset=utf-8",
+        //        dataType: "json",
+        //        success: function (msg) {
+        //            alert("Event added.");
+        //        },
+        //        error: function (e) {
+        //            alert("An error was encountered. Please try again.");
+        //        }
+        //    });
+        //}
 
                 
-        var eventsArray;
-        var usersArray;
+        //var eventsArray;
+        //var usersArray;
 
-        function loadEvents() {
-            var webMethod = "ProjectServices.asmx/GetEvents";
-            var webMethod2 = "ProjectServices.asmx/UserList";
-            var firstName;
-            var lastName;
-
-            $.ajax({
-                type: "POST",
-                url: webMethod2,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (msg) {
-                    if (msg.d.length > 0) {
-
-                        usersArray = msg.d;
-                                                
-                    }
-                    else {
-                        alert("Error loading page. Please refresh.")
-                    }
-                },
-                error: function (e) {
-                    alert("Can't load events." + e);
-                }
-            });
-
-             
+        function loadMentors() {
+            var webMethod = "ProjectServices.asmx/GetProfiles";
+           
+                   
             $.ajax({
                 type: "POST",
                 url: webMethod,
@@ -302,58 +199,21 @@
                 success: function (msg) {
                     
                     if (msg.d.length > 0) {
-
-                        $("#eventsList").empty();
-                        $("#myEventsList").empty();
-
-                        eventsArray = msg.d;
+                                                
+                        profilesArray = msg.d;
                         
-                        for (var i = 0; i < eventsArray.length; i++) {
+                        for (var i = 0; i < profilesArray.length; i++) {
+                                                                                 
 
-                            for (var u = 0; u < usersArray.length; u++) {
-                                if (eventsArray[i].creatorId == usersArray[u].registerId) {
-                                    firstName = usersArray[u].fName;
-                                    lastName = usersArray[u].lName;
-                                    }
-                            }
-
-                            
-
-                            var event = "<div class='eventCard'>" +
-                                "<div class='creatorBar'>" + firstName + " " + lastName+ "'s Event: </div> <br>" +
-                                "Class: " + eventsArray[i].className + "<br>" +
-                                "Description: " + eventsArray[i].description + "<br>" +
-                                "Date: " + eventsArray[i].date + "<br>" +
-                                "Time: " + eventsArray[i].time + "<br>" +
-                                "Location: " + eventsArray[i].location + "<br>" +
-                                "<div class='bottomBar'>" +
-                                "<div class='rsvpDiv'>People Attending: " + eventsArray[i].rsvpCount + "</div>" +
-                                "<button type='button' onclick='RSVP(value)' class='rsvpButton' value='" + eventsArray[i].eventId + "' id='" + eventsArray[i].eventId +"'> RSVP</button> " +
-                                "</div>" +
+                            var profile = "<div class='profileCard'>" +
+                                "<div class='nameBar'>" + profilesArray[i].fName + " " + profilesArray[i].lName+ "'s Event: </div> <br>" +
+                                "Job: " + profilesArray[i].jobTitle + "<br>" +
+                                "Expertise: " + profilesArray[i].expertise + "<br>" +
                                 "</div>" +
                                 "<hr>";
 
-                            if (eventsArray[i].creatorId == localStorage.getItem("sessionId")) {
-
-                                var event = "<div class='eventCard'>" +
-                                    "<div class='creatorBar'>" + firstName + " " + lastName + "'s Event: </div> <br>" +
-                                    "Class: " + eventsArray[i].className + "<br>" +
-                                    "Description: " + eventsArray[i].description + "<br>" +
-                                    "Date: " + eventsArray[i].date + "<br>" +
-                                    "Time: " + eventsArray[i].time + "<br>" +
-                                    "Location: " + eventsArray[i].location + "<br>" +
-                                    "<div class='bottomBar'>" +
-                                    "<div class='rsvpDiv'>People Attending: " + eventsArray[i].rsvpCount + "</div>" +
-                                    "</div>" +
-                                    "</div>" +
-                                    "<hr>";
-
-
-                                $("#myEventsList").append(event);
-                            }
-
-
-                            $("#eventsList").append(event);
+                            
+                            $("#mentorList").append(profile);
                             
                         }
 
