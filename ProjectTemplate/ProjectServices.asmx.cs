@@ -6,6 +6,7 @@ using System.Web.Services;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.IO;
 
 namespace ProjectTemplate
 {
@@ -22,12 +23,16 @@ namespace ProjectTemplate
 		private string dbID = "sweet16";
 		private string dbPass = "!!Sweet16";
 		private string dbName = "sweet16";
-		////////////////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////////////////
-		///call this method anywhere that you need the connection string!
-		////////////////////////////////////////////////////////////////////////
-		private string getConString() {
+
+        public object FileUploadControl { get; private set; }
+        public object StatusLabel { get; private set; }
+
+        ////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////
+        ///call this method anywhere that you need the connection string!
+        ////////////////////////////////////////////////////////////////////////
+        private string getConString() {
 			return "SERVER=107.180.1.16; PORT=3306; DATABASE=" + dbName+"; UID=" + dbID + "; PASSWORD=" + dbPass;
 		}
         ////////////////////////////////////////////////////////////////////////
@@ -440,11 +445,28 @@ namespace ProjectTemplate
                 return new Profile[0];
             }
         }
-
-        
+        protected void UploadButton_Click(object sender, EventArgs e)
+        {
+            if (FileUploadControl.HasFile)
+            {
+                try
+                {
+                    string filename = Path.GetFileName(FileUploadControl.FileName);
+                    FileUploadControl.SaveAs(Server.MapPath("~/") + filename);
+                    StatusLabel.Text = "Upload status: File uploaded!";
+                }
+                catch (Exception ex)
+                {
+                    StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
+                }
+            }
+        }
     }
 
-}
+    }
+    
+
+
  
 
 
