@@ -6,6 +6,7 @@ using System.Web.Services;
 using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.IO;
 
 namespace ProjectTemplate
 {
@@ -22,12 +23,16 @@ namespace ProjectTemplate
 		private string dbID = "sweet16";
 		private string dbPass = "!!Sweet16";
 		private string dbName = "sweet16";
-		////////////////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////////////////////////////////
-		///call this method anywhere that you need the connection string!
-		////////////////////////////////////////////////////////////////////////
-		private string getConString() {
+
+        public object FileUploadControl { get; private set; }
+        public object StatusLabel { get; private set; }
+
+        ////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////////////////////////////////
+        ///call this method anywhere that you need the connection string!
+        ////////////////////////////////////////////////////////////////////////
+        private string getConString() {
 			return "SERVER=107.180.1.16; PORT=3306; DATABASE=" + dbName+"; UID=" + dbID + "; PASSWORD=" + dbPass;
 		}
         ////////////////////////////////////////////////////////////////////////
@@ -348,54 +353,55 @@ namespace ProjectTemplate
         //}
 
 
-        ////getProfileInfo
-        //[WebMethod(EnableSession = true)]
-        //public Profile[] PersonalInfo(string sessionId)
-        //{
+        //getProfileInfo
+        [WebMethod(EnableSession = true)]
+        public Profile[] PersonalInfo(string sessionId)
+        {
 
-        //    //WE ONLY SHARE Events WITH LOGGED IN USERS!
-        //    if (Session["id"] != null)
-        //    {
-        //        DataTable sqlDt = new DataTable("Register");
+            //WE ONLY SHARE Events WITH LOGGED IN USERS!
+            if (Session["id"] != null)
+            {
+                DataTable sqlDt = new DataTable("Register");
 
-        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-        //        string sqlSelect = "select * from Register where @idRegisterValue = idRegister ";
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+                string sqlSelect = "select * from Register where @idRegisterValue = idRegister ";
 
-        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
-        //        sqlCommand.Parameters.AddWithValue("@idRegisterValue", HttpUtility.UrlDecode(sessionId));
-        //        //gonna use this to fill a data table
-        //        MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
-        //        //filling the data table
-        //        sqlDa.Fill(sqlDt);
+                sqlCommand.Parameters.AddWithValue("@idRegisterValue", HttpUtility.UrlDecode(sessionId));
+                //gonna use this to fill a data table
+                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+                //filling the data table
+                sqlDa.Fill(sqlDt);
 
-        //        //loop through each row in the dataset, creating instances
-        //        //of our container class Event.  Fill each eveny with
-        //        //data from the rows, then dump them in a list.
-        //        List<Profile> profile = new List<Profile>();
-        //        for (int i = 0; i < sqlDt.Rows.Count; i++)
-        //        {
+                //loop through each row in the dataset, creating instances
+                //of our container class Event.  Fill each eveny with
+                //data from the rows, then dump them in a list.
+                List<Profile> profile = new List<Profile>();
+                for (int i = 0; i < sqlDt.Rows.Count; i++)
+                {
 
-        //            profile.Add(new Profile
-        //            {
-        //                registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister"]),
-        //                fName = sqlDt.Rows[i]["fName"].ToString(),
-        //                lName = sqlDt.Rows[i]["lName"].ToString(),
-        //                year = sqlDt.Rows[i]["year"].ToString(),
-        //                college = sqlDt.Rows[i]["college"].ToString(),
-        //                campus = sqlDt.Rows[i]["campus"].ToString()
-        //            });
-        //        }
-        //        //convert the list of events to an array and return!
-        //        return profile.ToArray();
-        //    }
-        //    else
-        //    {
-        //        //if they're not logged in, return an empty event
-        //        return new Profile[0];
-        //    }
-        //}
+                    profile.Add(new Profile
+                    {
+                        registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister"]),
+                        fName = sqlDt.Rows[i]["fName"].ToString(),
+                        lName = sqlDt.Rows[i]["lName"].ToString(),
+                        companyName = sqlDt.Rows[i]["companyName"].ToString(),
+                        jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
+                        expertise = sqlDt.Rows[i]["expertise"].ToString(),
+                        image = sqlDt.Rows[i]["image"].ToString()
+                    });
+                }
+                //convert the list of events to an array and return!
+                return profile.ToArray();
+            }
+            else
+            {
+                //if they're not logged in, return an empty event
+                return new Profile[0];
+            }
+        }
 
 
         //// Lists of all users for the homepage. 
@@ -446,12 +452,30 @@ namespace ProjectTemplate
         //    }
         //}
 
-
         
-
+        protected void UploadButton_Click(object sender, EventArgs e)
+        {
+            if (FileUploadControl.HasFile)
+            {
+                try
+                {
+                    string filename = Path.GetFileName(FileUploadControl.FileName);
+                    FileUploadControl.SaveAs(Server.MapPath("~/") + filename);
+                    StatusLabel.Text = "Upload status: File uploaded!";
+                }
+                catch (Exception ex)
+                {
+                    StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
+                }
+            }
+        }
     }
 
-}
+>>>>>>> profile
+    }
+    
+
+
  
 
 

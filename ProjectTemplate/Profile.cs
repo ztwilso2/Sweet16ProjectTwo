@@ -18,4 +18,5 @@ namespace ProjectTemplate
         public string programStatus;
         public string image;
     }
+   
 }
