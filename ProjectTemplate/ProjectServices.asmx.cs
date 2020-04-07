@@ -485,11 +485,13 @@ namespace ProjectTemplate
             //WE ONLY SHARE Events WITH LOGGED IN USERS!
             if (Session["id"] != null)
             {
-                DataTable sqlDt = new DataTable("Register");
+                DataTable sqlDt = new DataTable("register2");
 
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+
                 string sqlSelect = "select * from register2 where @idRegisterValue = idregister2;";
 
+               
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
@@ -508,7 +510,7 @@ namespace ProjectTemplate
 
                     profile.Add(new Profile
                     {
-                        registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister"]),
+                        registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister2"]),
                         fName = sqlDt.Rows[i]["fName"].ToString(),
                         lName = sqlDt.Rows[i]["lName"].ToString(),
                         companyName = sqlDt.Rows[i]["companyName"].ToString(),
