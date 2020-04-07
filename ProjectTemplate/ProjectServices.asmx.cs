@@ -205,9 +205,56 @@ namespace ProjectTemplate
         //    }
         //}
 
-        //getEventInfo
+
+
         [WebMethod(EnableSession = true)]
-        public Profile[] GetProfiles()
+        public Filter[] LoadFilters(string sessionId)
+        {
+
+            //WE ONLY SHARE Events WITH LOGGED IN USERS!
+            if (Session["id"] != null)
+            {
+                DataTable sqlDt = new DataTable("Register");
+
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+                string sqlSelect = "select jobTitle, expertise from register2 where companyName = (select companyName from register2 where idregister2 = @idRegisterValue);";
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                sqlCommand.Parameters.AddWithValue("@idRegisterValue", HttpUtility.UrlDecode(sessionId));
+                //gonna use this to fill a data table
+                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+                //filling the data table
+                sqlDa.Fill(sqlDt);
+
+                //loop through each row in the dataset, creating instances
+                //of our container class Event.  Fill each eveny with
+                //data from the rows, then dump them in a list.
+                List<Filter> filters = new List<Filter>();
+                for (int i = 0; i < sqlDt.Rows.Count; i++)
+                {
+
+                    filters.Add(new Filter
+                    {
+                        jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
+                        expertise = sqlDt.Rows[i]["expertise"].ToString(),
+                        
+                    });
+                }
+                //convert the list of events to an array and return!
+                return filters.ToArray();
+            }
+            else
+            {
+                //if they're not logged in, return an empty event
+                return new Filter[0];
+            }
+        }
+
+        //load filtered profiles
+        [WebMethod(EnableSession = true)]
+        public Profile[] GetFilteredProfiles(string sessionId, string jobTitle, string expertise)
         {
 
             //WE ONLY SHARE Events WITH LOGGED IN USERS!
@@ -216,12 +263,30 @@ namespace ProjectTemplate
                 DataTable sqlDt = new DataTable("register2");
 
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-                string sqlSelect = "select * from register2 where programStatus = 'mentorMentee' or programStatus = 'Want to be a mentor';";
 
+                sessionId = HttpUtility.UrlDecode(sessionId);
+                jobTitle = HttpUtility.UrlDecode(jobTitle);
+                expertise = HttpUtility.UrlDecode(expertise);
+                string sqlSelect = "";
+
+                if (jobTitle != "default" && expertise != "default") {
+                    sqlSelect = "select * from register2 where (programStatus = 'mentor' or programStatus = 'mentorMentee') and companyName = (select companyName from register2 where idregister2 = @idRegisterValue) and jobTitle = @jobTitleValue and expertise = @expertiseValue;";
+                }
+                else if (jobTitle != "default" && expertise == "default")
+                {
+                    sqlSelect = "select * from register2 where (programStatus = 'mentor' or programStatus = 'mentorMentee') and companyName = (select companyName from register2 where idregister2 = @idRegisterValue) and jobTitle = @jobTitleValue;";
+                }
+                else if (jobTitle == "default" && expertise != "default")
+                {
+                    sqlSelect = "select * from register2 where(programStatus = 'mentor' or programStatus = 'mentorMentee') and companyName = (select companyName from register2 where idregister2 = @idRegisterValue) and expertise = @expertiseValue;";
+                }
 
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
+                sqlCommand.Parameters.AddWithValue("@idRegisterValue", HttpUtility.UrlDecode(sessionId));
+                sqlCommand.Parameters.AddWithValue("@jobTitleValue", HttpUtility.UrlDecode(jobTitle));
+                sqlCommand.Parameters.AddWithValue("@expertiseValue", HttpUtility.UrlDecode(expertise));
 
                 //gonna use this to fill a data table
                 MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
@@ -231,11 +296,11 @@ namespace ProjectTemplate
                 //loop through each row in the dataset, creating instances
                 //of our container class Event.  Fill each eveny with
                 //data from the rows, then dump them in a list.
-                List<Profile> events = new List<Profile>();
+                List<Profile> profiles = new List<Profile>();
                 for (int i = 0; i < sqlDt.Rows.Count; i++)
                 {
 
-                    events.Add(new Profile
+                    profiles.Add(new Profile
                     {
                         registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister2"]),
                         fName = sqlDt.Rows[i]["fName"].ToString(),
@@ -252,7 +317,7 @@ namespace ProjectTemplate
                 }
 
                 //convert the list of events to an array and return!
-                return events.ToArray();
+                return profiles.ToArray();
             }
             else
             {
@@ -260,6 +325,65 @@ namespace ProjectTemplate
                 return new Profile[0];
             }
         }
+
+
+        //getEventInfo
+        [WebMethod(EnableSession = true)]
+        public Profile[] GetProfiles(string sessionId)
+        {
+
+            //WE ONLY SHARE Events WITH LOGGED IN USERS!
+            if (Session["id"] != null)
+            {
+                DataTable sqlDt = new DataTable("register2");
+
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+                string sqlSelect = "select * from register2 where (programStatus = 'mentor' or programStatus = 'mentorMentee') and companyName = (select companyName from register2 where idregister2 = @idRegisterValue);";
+
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                sqlCommand.Parameters.AddWithValue("@idRegisterValue", HttpUtility.UrlDecode(sessionId));
+                //gonna use this to fill a data table
+                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+                //filling the data table
+                sqlDa.Fill(sqlDt);
+
+                //loop through each row in the dataset, creating instances
+                //of our container class Event.  Fill each eveny with
+                //data from the rows, then dump them in a list.
+                List<Profile> profiles = new List<Profile>();
+                for (int i = 0; i < sqlDt.Rows.Count; i++)
+                {
+
+                    profiles.Add(new Profile
+                    {
+                        registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister2"]),
+                        fName = sqlDt.Rows[i]["fName"].ToString(),
+                        lName = sqlDt.Rows[i]["lName"].ToString(),
+                        email = sqlDt.Rows[i]["email"].ToString(),
+                        password = sqlDt.Rows[i]["password"].ToString(),
+                        companyName = sqlDt.Rows[i]["companyName"].ToString(),
+                        jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
+                        expertise = sqlDt.Rows[i]["expertise"].ToString(),
+                        programStatus = sqlDt.Rows[i]["programStatus"].ToString(),
+                        image = sqlDt.Rows[i]["image"].ToString()
+
+                    });
+                }
+
+                //convert the list of events to an array and return!
+                return profiles.ToArray();
+            }
+            else
+            {
+                //if they're not logged in, return an empty event
+                return new Profile[0];
+            }
+        }
+
+
 
 
 
@@ -364,7 +488,7 @@ namespace ProjectTemplate
                 DataTable sqlDt = new DataTable("Register");
 
                 string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-                string sqlSelect = "select * from Register where @idRegisterValue = idRegister ";
+                string sqlSelect = "select * from register2 where @idRegisterValue = idregister2;";
 
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -453,25 +577,24 @@ namespace ProjectTemplate
         //}
 
         
-        protected void UploadButton_Click(object sender, EventArgs e)
-        {
-            if (FileUploadControl.HasFile)
-            {
-                try
-                {
-                    string filename = Path.GetFileName(FileUploadControl.FileName);
-                    FileUploadControl.SaveAs(Server.MapPath("~/") + filename);
-                    StatusLabel.Text = "Upload status: File uploaded!";
-                }
-                catch (Exception ex)
-                {
-                    StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
-                }
-            }
-        }
+        //protected void UploadButton_Click(object sender, EventArgs e)
+        //{
+        //    if (FileUploadControl.HasFile)
+        //    {
+        //        try
+        //        {
+        //            string filename = Path.GetFileName(FileUploadControl.FileName);
+        //            FileUploadControl.SaveAs(Server.MapPath("~/") + filename);
+        //            StatusLabel.Text = "Upload status: File uploaded!";
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
+        //        }
+        //    }
+        //}
     }
 
->>>>>>> profile
     }
     
 

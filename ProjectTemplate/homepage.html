@@ -25,12 +25,23 @@
 
     <section id="layout">
         
+        <div id="mentorsDiv">
             <h2>Available Mentors</h2>
-            <form>
-                <div id="mentorList">
 
-                </div>
+            <form id="mentorFilter">
+                <select id="jobTitleFilter">
+                    <option value="default">--</option>
+                </select>
+                <select id="expertiseFilter">
+                    <option value="default">--</option>
+                </select>
+                <button type="button" onclick="loadFilteredMentors()">Filter</button>
             </form>
+
+            <div id="mentorList">
+
+            </div>
+        </div>   
                 
     </section>
 
@@ -43,16 +54,73 @@
     <script type="text/javascript">
 
         document.addEventListener("load", loadMentors());
-        //document.getElementById("createButton").addEventListener("click", loadEvents);
-
-
-        //accessing the user ID for the session on each page You can use this format
-        //1. Store it in a local variable and go from there. For some reason, only works w/in scope of function
-        //2. use the localStorage.getItem("sessionId") directly
+        document.addEventListener("load", loadFilters());
         
-            //userId = localStorage.getItem("sessionId");
-           // alert(userId);
-            //alert(localStorage.getItem("sessionId"));
+
+
+        function loadFilters() {
+            var webMethod = "ProjectServices.asmx/LoadFilters";
+            var uid = localStorage.getItem("sessionId");
+            var parameters = "{\"sessionId\":\"" + encodeURI(uid) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+
+                    if (msg.d.length > 0) {
+
+                        filtersArray = msg.d;
+
+                        var jobTitleArray = []
+                        var expertiseArray = []
+
+
+                        for (var i = 0; i < filtersArray.length; i++) {
+
+                            jobTitleArray.push(filtersArray[i].jobTitle);
+                            expertiseArray.push(filtersArray[i].expertise);
+                        }
+
+                        
+                        var uniquejobTitleArray = [];
+                        $.each(jobTitleArray, function (i, el) {
+                            if ($.inArray(el, uniquejobTitleArray) === -1) uniquejobTitleArray.push(el);
+                        });
+
+                        var uniqueExpertiseArray = [];
+                        $.each(expertiseArray, function (i, el) {
+                            if ($.inArray(el, uniqueExpertiseArray) === -1) uniqueExpertiseArray.push(el);
+                        });
+
+                        for (var i = 0; i < uniquejobTitleArray.length; i++) {
+
+
+                            var jobTitle = "<option value='" + uniquejobTitleArray[i] + "'>" + uniquejobTitleArray[i] + "</option>";
+
+                            $("#jobTitleFilter").append(jobTitle);
+                        }
+
+                        for (var i = 0; i < uniqueExpertiseArray.length; i++) {
+
+                            var expertise = "<option value='" + uniqueExpertiseArray[i] + "'>" + uniqueExpertiseArray[i] + "</option>";
+
+                            $("#expertiseFilter").append(expertise);
+
+                        }
+
+                    }
+  
+
+                },
+                error: function (e) {
+                    alert("Can't load filters." + e);
+                }
+            });
+        }
         
 
 
@@ -189,13 +257,65 @@
         //var eventsArray;
         //var usersArray;
 
+
+        function loadFilteredMentors() {
+            var webMethod = "ProjectServices.asmx/GetFilteredProfiles";
+            var uid = localStorage.getItem("sessionId");
+            var jobTitleFilter = $('#jobTitleFilter').val();
+            var expertiseFilter = $('#expertiseFilter').val();
+            var parameters = "{\"sessionId\":\"" + encodeURI(uid) + "\",\"jobTitle\":\"" + encodeURI(jobTitleFilter) + "\",\"expertise\":\"" + encodeURI(expertiseFilter) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+
+                    if (msg.d.length > 0) {
+
+                        profilesArray = msg.d;
+
+                        $("#mentorList").empty();
+
+                        for (var i = 0; i < profilesArray.length; i++) {
+
+
+                            var profile = "<div class='profileCard'>" +
+                                "<div class='nameBar'>" + profilesArray[i].fName + " " + profilesArray[i].lName + "</div> <br>" +
+                                "Job: " + profilesArray[i].jobTitle + "<br>" +
+                                "Expertise: " + profilesArray[i].expertise + "<br>" +
+                                "</div>" +
+                                "<hr>";
+
+
+                            $("#mentorList").append(profile);
+
+                        }
+
+                    }
+                    else {
+                        $("#mentorList").empty();
+                        $("#mentorList").append("No Results");
+                    }
+                },
+                error: function (e) {
+                    alert("Can't load mentors." + e);
+                }
+            });
+        }
+
+
         function loadMentors() {
             var webMethod = "ProjectServices.asmx/GetProfiles";
-           
+            var uid = localStorage.getItem("sessionId");
+            var parameters = "{\"sessionId\":\"" + encodeURI(uid) + "\"}";
                    
             $.ajax({
                 type: "POST",
                 url: webMethod,
+                data: parameters,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (msg) {
@@ -208,7 +328,7 @@
                                                                                  
 
                             var profile = "<div class='profileCard'>" +
-                                "<div class='nameBar'>" + profilesArray[i].fName + " " + profilesArray[i].lName+ "'s Event: </div> <br>" +
+                                "<div class='nameBar'>" + profilesArray[i].fName + " " + profilesArray[i].lName+ "</div> <br>" +
                                 "Job: " + profilesArray[i].jobTitle + "<br>" +
                                 "Expertise: " + profilesArray[i].expertise + "<br>" +
                                 "</div>" +
@@ -222,7 +342,7 @@
                     }
                 },
                 error: function (e) {
-                    alert("Can't load events." + e);
+                    alert("Can't load mentors." + e);
                 }
             });
         }
