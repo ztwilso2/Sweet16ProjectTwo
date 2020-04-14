@@ -10,19 +10,19 @@ using System.IO;
 
 namespace ProjectTemplate
 {
-	[WebService(Namespace = "http://tempuri.org/")]
-	[WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-	[System.ComponentModel.ToolboxItem(false)]
-	[System.Web.Script.Services.ScriptService]
+    [WebService(Namespace = "http://tempuri.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    [System.Web.Script.Services.ScriptService]
 
-	public class ProjectServices : System.Web.Services.WebService
-	{
-		////////////////////////////////////////////////////////////////////////
-		///replace the values of these variables with your database credentials
-		////////////////////////////////////////////////////////////////////////
-		private string dbID = "sweet16";
-		private string dbPass = "!!Sweet16";
-		private string dbName = "sweet16";
+    public class ProjectServices : System.Web.Services.WebService
+    {
+        ////////////////////////////////////////////////////////////////////////
+        ///replace the values of these variables with your database credentials
+        ////////////////////////////////////////////////////////////////////////
+        private string dbID = "sweet16";
+        private string dbPass = "!!Sweet16";
+        private string dbName = "sweet16";
 
         public object FileUploadControl { get; private set; }
         public object StatusLabel { get; private set; }
@@ -32,9 +32,10 @@ namespace ProjectTemplate
         ////////////////////////////////////////////////////////////////////////
         ///call this method anywhere that you need the connection string!
         ////////////////////////////////////////////////////////////////////////
-        private string getConString() {
-			return "SERVER=107.180.1.16; PORT=3306; DATABASE=" + dbName+"; UID=" + dbID + "; PASSWORD=" + dbPass;
-		}
+        private string getConString()
+        {
+            return "SERVER=107.180.1.16; PORT=3306; DATABASE=" + dbName + "; UID=" + dbID + "; PASSWORD=" + dbPass;
+        }
         ////////////////////////////////////////////////////////////////////////
 
 
@@ -43,30 +44,30 @@ namespace ProjectTemplate
         //don't forget to include this decoration above each method that you want
         //to be exposed as a web service!
         [WebMethod(EnableSession = true)]
-		public string TestConnection()
-		{
-			try
-			{
-				string testQuery = "select * from testQuery";
+        public string TestConnection()
+        {
+            try
+            {
+                string testQuery = "select * from testQuery";
 
-				////////////////////////////////////////////////////////////////////////
-				///here's an example of using the getConString method!
-				////////////////////////////////////////////////////////////////////////
-				MySqlConnection con = new MySqlConnection(getConString());
-				////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////
+                ///here's an example of using the getConString method!
+                ////////////////////////////////////////////////////////////////////////
+                MySqlConnection con = new MySqlConnection(getConString());
+                ////////////////////////////////////////////////////////////////////////
 
-				MySqlCommand cmd = new MySqlCommand(testQuery, con);
-				MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-				DataTable table = new DataTable();
-				adapter.Fill(table);
+                MySqlCommand cmd = new MySqlCommand(testQuery, con);
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                DataTable table = new DataTable();
+                adapter.Fill(table);
 
-				return "Success";
-			}
-			catch (Exception e)
-			{
-				return "Something went wrong, please check your credentials and db name and try again.  Error: "+e.Message;
-			}
-		}
+                return "Success";
+            }
+            catch (Exception e)
+            {
+                return "Something went wrong, please check your credentials and db name and try again.  Error: " + e.Message;
+            }
+        }
 
 
 
@@ -121,7 +122,7 @@ namespace ProjectTemplate
         public int LogOn(string uid, string pass)
         {
             //bool success = false;
-            int userId=-1;
+            int userId = -1;
 
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
             string sqlSelect = "SELECT idRegister2 FROM register2 WHERE (email=@idValue and password=@passValue);";
@@ -239,7 +240,7 @@ namespace ProjectTemplate
                     {
                         jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
                         expertise = sqlDt.Rows[i]["expertise"].ToString(),
-                        
+
                     });
                 }
                 //convert the list of events to an array and return!
@@ -269,7 +270,8 @@ namespace ProjectTemplate
                 expertise = HttpUtility.UrlDecode(expertise);
                 string sqlSelect = "";
 
-                if (jobTitle != "default" && expertise != "default") {
+                if (jobTitle != "default" && expertise != "default")
+                {
                     sqlSelect = "select * from register2 where (programStatus = 'mentor' or programStatus = 'mentorMentee') and companyName = (select companyName from register2 where idregister2 = @idRegisterValue) and jobTitle = @jobTitleValue and expertise = @expertiseValue;";
                 }
                 else if (jobTitle != "default" && expertise == "default")
@@ -491,7 +493,7 @@ namespace ProjectTemplate
 
                 string sqlSelect = "select * from register2 where @idRegisterValue = idregister2;";
 
-               
+
                 MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
                 MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
@@ -578,7 +580,7 @@ namespace ProjectTemplate
         //    }
         //}
 
-        
+
         //protected void UploadButton_Click(object sender, EventArgs e)
         //{
         //    if (FileUploadControl.HasFile)
@@ -595,13 +597,38 @@ namespace ProjectTemplate
         //        }
         //    }
         //}
-    }
+
+        // WEBSERVICE TO SEND A MESSAGE
+        //[WebMethod(EnableSession = true)]
+        //public string SendMessage(string idmessageBoard, string message, string date)
+        //{
+        //    If(Session[“id”] != null)
+        //        DataTable sqlDt = new DataTable("messageBoard");
+        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+        //        String sqlSelect = “select * from messages, date";
+        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+        // }
+
+        // WEBSERVICE TO SEE CHAT HISTORY (SHOWS LAST 10 MESSAGES)
+        //[WebMethod(EnableSession = true)]
+        //public string GetChatHistory(string idmessageBoard, string message,from)
+        //{
+        //    If(Session[“id”] != null)
+        //        DataTable sqlDt = new DataTable("messageBoard");
+        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+        //        String sqlSelect = “select * from ";
+        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+        // }
 
     }
-    
+
+}
 
 
- 
+
+
 
 
 
