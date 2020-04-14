@@ -10,6 +10,7 @@
     <script type="text/javascript">
 
         var sessionId; 
+        var sessionType;
 
         function logOn() {
             var webMethod = "ProjectServices.asmx/LogOn";
@@ -27,9 +28,12 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (msg) {
-                    if (msg.d > -1) {
-                        sessionId = msg.d;
-                        localStorage.setItem("sessionId", msg.d); 
+
+                    loginProfile = msg.d;
+                    if (loginProfile.registerId > -1) {
+                        sessionId = loginProfile.registerId;
+                        localStorage.setItem("sessionId", loginProfile.registerId); 
+                        localStorage.setItem("sessionType", loginProfile.programStatus); 
                         window.location.assign("./homepage.html");
                     }
                     else {

@@ -3,10 +3,118 @@
 <head>
     <title>MentorMe</title>
     <link rel="stylesheet" type="text/css" href="StyleSheet1.css">
+    
+</head>
+<body>
+    <div class="header">
+        <h1>MentorMe</h1>
+        <p>Mentoring for Professionals Everywhere</p>
+    </div>
+    <div id="registerFormDiv">
+
+        <form id="registerForm">
+            <h1 id="titleText" style="color:rgb(128,128,128)">Create an Account</h1>
+            <div id="RegisterInfoDiv">
+                <table id="registerTable">
+                    <tr>
+                        <td>First Name</td>
+                        <td><input type="text" name="" id="newFName" class="registryInputs"></td>
+                    </tr>
+                    <tr>
+                        <td>Last Name</td>
+                        <td><input type="text" name="" id="newLName" class="registryInputs"></td>
+                    </tr>
+                    <tr>
+                        <td>Email </td>
+                        <td><input type="text" name="" id="newEmail" class="registryInputs"></td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td><input type="password" name="" id="newPassword" class="registryInputs"></td>
+                    </tr>
+                    <tr>
+                        <td>Company Name</td>
+                        <td>
+                            <select id="companyName" class="registrySelects">
+                                <option value=" "> </option>
+
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Job Title</td>
+                        <td>
+                            <input type="text" name="" id="newJobTitle" class="registryInputs">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Expertise</td>
+                        <td>
+                            <select id="newExpertiseLevel" class="registrySelects">
+                                <option value=" "> </option>
+                                <option value="Entry Level">Entry Level</option>
+                                <option value="Senior Level">Senior Level</option>
+                                <option value="Manager">Manager</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Program Status</td>
+                        <td>
+                            <select id="newProgramStatus" class="registrySelects">
+                                <option value=" "> </option>
+                                <option value="mentee">Looking for a Mentor</option>
+                                <option value="mentor">Want to be a Mentor</option>
+                                <option value="mentorMentee">Both</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="./loginPage.html">Log in Page</a></td>
+                        <td><button type="button" onclick="createAccount()">Register</button></td>
+                    </tr>
+
+                </table>
+            </div>
+        </form>
+    </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
-        function goToLogOn(){
+
+        document.addEventListener("load", loadCompanies());
+        function goToLogOn() {
             window.location.assign("./loginPage.html")
+        }
+
+
+        function loadCompanies() {
+            var webMethod = "ProjectServices.asmx/LoadCompanies";
+            
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+
+                    if (msg.d.length > 0) {
+
+                        companiesArray = msg.d;
+
+
+                        for (var i = 0; i < companiesArray.length; i++) {
+
+                            var jobTitle = "<option value='" + companiesArray[i].companyName + "'>" + companiesArray[i].companyName + "</option>";
+
+                            $("#companyName").append(jobTitle);
+                        }
+
+                    }
+                },
+                error: function (e) {
+                    alert("Can't load filters." + e);
+                }
+            });
         }
 
         function createAccount() {
@@ -38,76 +146,5 @@
         }
 
     </script>
-</head>
-<body>
-    <div class="header">
-        <h1>MentorMe</h1>
-        <p>Mentoring for Professionals Everywhere</p>
-    </div>
-    <div id="registerFormDiv">
-
-        <form id="registerForm">
-            <h1 id="titleText" style="color:rgb(128,128,128)">Create an Account</h1>
-            <div id="RegisterInfoDiv">
-                <table id="registerTable">
-                    <tr>
-                        <td>First Name</td>
-                        <td><input type="text" name="" id="newFName"></td>
-                    </tr>
-                    <tr>
-                        <td>Last Name</td>
-                        <td><input type="text" name="" id="newLName"></td>
-                    </tr>
-                    <tr>
-                        <td>Email </td>
-                        <td><input type="text" name="" id="newEmail"></td>
-                    </tr>
-                    <tr>
-                        <td>Password</td>
-                        <td><input type="password" name="" id="newPassword"></td>
-                    </tr>
-                    <tr>
-                        <td>Company Name</td>
-                        <td>
-                            <input type="text" name="" id="newCompanyName">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Job Title</td>
-                        <td>
-                            <input type="text" name="" id="newJobTitle">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Expertise</td>
-                        <td>
-                            <select id="newExpertiseLevel">
-                                <option value=" "> </option>
-                                <option value="Entry Level">Entry Level</option>
-                                <option value="Senior Level">Senior Level</option>
-                                <option value="Manager">Manager</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Program Status</td>
-                        <td>
-                            <select id="newProgramStatus">
-                                <option value=" "> </option>
-                                <option value="mentee">Looking for a Mentor</option>
-                                <option value="mentor">Want to be a Mentor</option>
-                                <option value="mentorMentee">Both</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><a href="./loginPage.html">Log in Page</a></td>
-                        <td><button type="button" onclick="createAccount()">Register</button></td>
-                    </tr>
-
-                </table>
-            </div>
-        </form>
-    </div>
 </body>
 </html>

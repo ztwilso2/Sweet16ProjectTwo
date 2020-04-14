@@ -23,22 +23,66 @@
         </div>
     </header>
 
-    <section id="layout">
+    <section id="mentorLayout">
+        <div class="currentMentees">
+            THESE ARE CURRENT MENTEES
+        </div>
+
+        <div class="menteeRequests">
+            ACCEPT OR DECLINE MENTEES HERE
+        </div>
         
-        <div id="mentorsDiv">
+    </section>
+
+    <section id="bothLayout">
+        <div class="mentorSideDiv">
+            <div class="currentMentees">
+                THESE ARE CURRENT MENTEES
+            </div>
+
+            <div class="menteeRequests">
+                ACCEPT OR DECLINE MENTEES HERE
+            </div>
+        </div>
+        <div class="menteeSideDiv">
+            <div class="mentorsDiv">
+                <h2>Available Mentors</h2>
+
+                <form class="mentorFilter">
+                    <select id="bothJobTitleFilter">
+                        <option value="default">--</option>
+                    </select>
+                    <select id="bothExpertiseFilter">
+                        <option value="default">--</option>
+                    </select>
+                    <button type="button" onclick="loadFilteredMentors()">Filter</button>
+                </form>
+
+                <div class="mentorList">
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="menteeLayout">
+        <div class="menteeProfileDiv">
+            
+        </div>
+        <div class="mentorsDiv">
             <h2>Available Mentors</h2>
 
-            <form id="mentorFilter">
-                <select id="jobTitleFilter">
+            <form class="mentorFilter">
+                <select id="menteeJobTitleFilter">
                     <option value="default">--</option>
                 </select>
-                <select id="expertiseFilter">
+                <select id="menteeExpertiseFilter">
                     <option value="default">--</option>
                 </select>
                 <button type="button" onclick="loadFilteredMentors()">Filter</button>
             </form>
 
-            <div id="mentorList">
+            <div class="mentorList">
 
             </div>
         </div>   
@@ -53,10 +97,45 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
 
-        document.addEventListener("load", loadMentors());
-        document.addEventListener("load", loadFilters());
-        
+              
+        document.addEventListener("load", loadPage());
 
+
+        function loadPage() {
+            sessionType = localStorage.getItem("sessionType");
+
+            if (sessionType == "mentee") {
+                loadMenteePage();
+            }
+            else if (sessionType == "mentorMentee") {
+                loadMentorMenteePage();
+            }
+            else if (sessionType == "mentor") {
+                loadMentorPage();
+            }
+        }
+
+        function loadMenteePage() {
+            $("#menteeLayout").css("display", "block");
+            $("#bothLayout").css("display", "none");
+            $("#mentorLayout").css("display", "none");
+            loadMentors();
+            loadFilters();
+        }
+
+        function loadMentorMenteePage() {
+            $("#menteeLayout").css("display", "none");
+            $("#bothLayout").css("display", "block");
+            $("#mentorLayout").css("display", "none");
+            loadMentors();
+            loadFilters();
+        }
+
+        function loadMentorPage() {
+            $("#menteeLayout").css("display", "none");
+            $("#bothLayout").css("display", "none");
+            $("#mentorLayout").css("display", "block");
+        }
 
         function loadFilters() {
             var webMethod = "ProjectServices.asmx/LoadFilters";
@@ -101,14 +180,16 @@
 
                             var jobTitle = "<option value='" + uniquejobTitleArray[i] + "'>" + uniquejobTitleArray[i] + "</option>";
 
-                            $("#jobTitleFilter").append(jobTitle);
+                            $("#bothJobTitleFilter").append(jobTitle);
+                            $("#menteeJobTitleFilter").append(jobTitle);
                         }
 
                         for (var i = 0; i < uniqueExpertiseArray.length; i++) {
 
                             var expertise = "<option value='" + uniqueExpertiseArray[i] + "'>" + uniqueExpertiseArray[i] + "</option>";
 
-                            $("#expertiseFilter").append(expertise);
+                            $("#bothExpertiseFilter").append(expertise);
+                            $("#menteeExpertiseFilter").append(expertise);
 
                         }
 
@@ -261,8 +342,16 @@
         function loadFilteredMentors() {
             var webMethod = "ProjectServices.asmx/GetFilteredProfiles";
             var uid = localStorage.getItem("sessionId");
-            var jobTitleFilter = $('#jobTitleFilter').val();
-            var expertiseFilter = $('#expertiseFilter').val();
+
+            if (sessionType == "mentee") {
+                var jobTitleFilter = $('#menteeJobTitleFilter').val();
+                var expertiseFilter = $('#menteeExpertiseFilter').val();
+            }
+            else if (sessionType == "mentorMentee") {
+                var jobTitleFilter = $('#bothJobTitleFilter').val();
+                var expertiseFilter = $('#bothExpertiseFilter').val();
+            }
+
             var parameters = "{\"sessionId\":\"" + encodeURI(uid) + "\",\"jobTitle\":\"" + encodeURI(jobTitleFilter) + "\",\"expertise\":\"" + encodeURI(expertiseFilter) + "\"}";
 
             $.ajax({
@@ -277,27 +366,33 @@
 
                         profilesArray = msg.d;
 
-                        $("#mentorList").empty();
+                        $(".mentorList").empty();
 
+                        
                         for (var i = 0; i < profilesArray.length; i++) {
 
+                            if (profilesArray[i].registerId != localStorage.getItem("sessionId")) {
 
-                            var profile = "<div class='profileCard'>" +
-                                "<div class='nameBar'>" + profilesArray[i].fName + " " + profilesArray[i].lName + "</div> <br>" +
-                                "Job: " + profilesArray[i].jobTitle + "<br>" +
-                                "Expertise: " + profilesArray[i].expertise + "<br>" +
-                                "</div>" +
-                                "<hr>";
+                                var profile = "<div class='profileCard'>" +
+                                    "<div class='nameBar'> <b>" + profilesArray[i].fName + " " + profilesArray[i].lName + "</b> </div> <br>" +
+                                    "<b>Job:</b> " + profilesArray[i].jobTitle + "<br>" +
+                                    "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
+                                    "<div class='requestMentorBar'>" +
+                                    "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
+                                    "<button type=button class='requestButton'>Request Mentor</button>" +
+                                    "</div>" +
+                                    "</div>" +
+                                    "<hr>";
 
 
-                            $("#mentorList").append(profile);
+                                $(".mentorList").append(profile);
 
+                            }
                         }
-
                     }
                     else {
-                        $("#mentorList").empty();
-                        $("#mentorList").append("No Results");
+                        $(".mentorList").empty();
+                        $(".mentorList").append("No Results");
                     }
                 },
                 error: function (e) {
@@ -325,18 +420,22 @@
                         profilesArray = msg.d;
                         
                         for (var i = 0; i < profilesArray.length; i++) {
-                                                                                 
 
-                            var profile = "<div class='profileCard'>" +
-                                "<div class='nameBar'>" + profilesArray[i].fName + " " + profilesArray[i].lName+ "</div> <br>" +
-                                "Job: " + profilesArray[i].jobTitle + "<br>" +
-                                "Expertise: " + profilesArray[i].expertise + "<br>" +
-                                "</div>" +
-                                "<hr>";
+                            if (profilesArray[i].registerId != localStorage.getItem("sessionId")) {
 
-                            
-                            $("#mentorList").append(profile);
-                            
+                                var profile = "<div class='profileCard'>" +
+                                        "<div class='nameBar'> <b>" + profilesArray[i].fName + " " + profilesArray[i].lName + "</b> </div> <br>" +
+                                        "<b>Job:</b> " + profilesArray[i].jobTitle + "<br>" +
+                                        "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
+                                        "<div class='requestMentorBar'>"  +
+                                            "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
+                                            "<button type=button class='requestButton'>Request Mentor</button>" +
+                                        "</div>" +
+                                    "</div>" +
+                                    "<hr>";
+                                
+                                $(".mentorList").append(profile);
+                            }
                         }
 
                     }

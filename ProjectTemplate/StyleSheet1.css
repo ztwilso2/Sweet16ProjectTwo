@@ -24,6 +24,14 @@ footer{ clear:both;
 }
 
 /*Register Page CSS*/
+.registryInputs {
+    width: 130px;
+}
+
+.registrySelects {
+    width: 134px;
+}
+
 #registerFormDiv {
     text-align: center;
     background-color: #faf0e6;
@@ -143,9 +151,6 @@ header {
         font-size: 20px;
     }
 
-/*#layout {
-    display: block;
-}
 
 #create {
     width: 25%;

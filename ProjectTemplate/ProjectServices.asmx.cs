@@ -75,11 +75,18 @@ namespace ProjectTemplate
         public void RequestAccount(string fName, string lName, string email, string password, string companyName,
                                     string jobTitle, string expertise, string programStatus)
         {
+            var menteeCount = 0;
+
+            if (HttpUtility.UrlDecode(programStatus) == "mentee")
+            {
+                menteeCount = -1;
+            }
+
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
             //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
             //does is tell mySql server to return the primary key of the last inserted row.
-            string sqlSelect = "insert into register2 (fname, lname, email, password, companyName, jobTitle, expertise, programStatus) " +
-                "values(@fnameValue, @lnameValue, @emailValue, @passwordValue, @companyNameValue, @jobTitleValue, @expertiseValue, @programStatusValue); SELECT LAST_INSERT_ID();";
+            string sqlSelect = "insert into register2 (fname, lname, email, password, companyName, jobTitle, expertise, programStatus, numofMentees) " +
+                "values(@fnameValue, @lnameValue, @emailValue, @passwordValue, @companyNameValue, @jobTitleValue, @expertiseValue, @programStatusValue, @menteeCount); SELECT LAST_INSERT_ID();";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -93,6 +100,7 @@ namespace ProjectTemplate
             sqlCommand.Parameters.AddWithValue("@jobTitleValue", HttpUtility.UrlDecode(jobTitle));
             sqlCommand.Parameters.AddWithValue("@expertiseValue", HttpUtility.UrlDecode(expertise));
             sqlCommand.Parameters.AddWithValue("@programStatusValue", HttpUtility.UrlDecode(programStatus));
+            sqlCommand.Parameters.AddWithValue("@menteeCount", menteeCount);
 
             //this time, we're not using a data adapter to fill a data table.  We're just
             //opening the connection, telling our command to "executescalar" which says basically
@@ -118,13 +126,12 @@ namespace ProjectTemplate
 
         //Login Logic//
         [WebMethod(EnableSession = true)]
-        public int LogOn(string uid, string pass)
+        public Profile LogOn(string uid, string pass)
         {
             //bool success = false;
-            int userId=-1;
-
+            
             string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-            string sqlSelect = "SELECT idRegister2 FROM register2 WHERE (email=@idValue and password=@passValue);";
+            string sqlSelect = "SELECT idRegister2, programStatus FROM register2 WHERE (email=@idValue and password=@passValue);";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -137,14 +144,32 @@ namespace ProjectTemplate
             DataTable sqlDt = new DataTable();
             sqlDa.Fill(sqlDt);
 
+            Profile loginProfile;
             if (sqlDt.Rows.Count > 0)
             {
+
+                loginProfile = new Profile
+                {
+                    registerId = Convert.ToInt32(sqlDt.Rows[0]["idregister2"]),
+                    programStatus = sqlDt.Rows[0]["programStatus"].ToString()
+
+                };
+
                 Session["id"] = sqlDt.Rows[0]["idRegister2"];
                 //success = true;
-                userId = Convert.ToInt32(sqlDt.Rows[0]["idRegister2"]);
+                
+            }
+            else
+            {
+                loginProfile = new Profile
+                {
+                    registerId = -1,
+                    programStatus = ""
+
+                };
             }
 
-            return userId;
+            return loginProfile;
         }
 
         //Log Off Method
@@ -204,6 +229,43 @@ namespace ProjectTemplate
         //        return "Please log in";
         //    }
         //}
+
+        [WebMethod(EnableSession = true)]
+        public Company[] LoadCompanies()
+        {
+
+            //WE ONLY SHARE Events WITH LOGGED IN USERS!
+            
+                DataTable sqlDt = new DataTable("companies");
+
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+                string sqlSelect = "select * from companies";
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                //gonna use this to fill a data table
+                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+                //filling the data table
+                sqlDa.Fill(sqlDt);
+
+                //loop through each row in the dataset, creating instances
+                //of our container class Event.  Fill each eveny with
+                //data from the rows, then dump them in a list.
+                List<Company> companies = new List<Company>();
+                for (int i = 0; i < sqlDt.Rows.Count; i++)
+                {
+
+                    companies.Add(new Company
+                    {
+                        companyName = sqlDt.Rows[i]["companyName"].ToString(),
+                        
+                    });
+                }
+                //convert the list of events to an array and return!
+                return companies.ToArray();
+            
+        }
 
 
 
@@ -311,6 +373,7 @@ namespace ProjectTemplate
                         jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
                         expertise = sqlDt.Rows[i]["expertise"].ToString(),
                         programStatus = sqlDt.Rows[i]["programStatus"].ToString(),
+                        numOfMentees = Convert.ToInt32(sqlDt.Rows[i]["numofMentees"]),
                         image = sqlDt.Rows[i]["image"].ToString()
 
                     });
@@ -368,6 +431,7 @@ namespace ProjectTemplate
                         jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
                         expertise = sqlDt.Rows[i]["expertise"].ToString(),
                         programStatus = sqlDt.Rows[i]["programStatus"].ToString(),
+                        numOfMentees = Convert.ToInt32(sqlDt.Rows[i]["numofMentees"]),
                         image = sqlDt.Rows[i]["image"].ToString()
 
                     });
@@ -599,9 +663,4 @@ namespace ProjectTemplate
 
     }
     
-
-
- 
-
-
 
