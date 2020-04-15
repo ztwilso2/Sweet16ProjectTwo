@@ -156,8 +156,7 @@ namespace ProjectTemplate
                 };
 
                 Session["id"] = sqlDt.Rows[0]["idRegister2"];
-                //success = true;
-                
+                               
             }
             else
             {
@@ -183,52 +182,7 @@ namespace ProjectTemplate
             return true;
         }
 
-        //[WebMethod(EnableSession = true)]
-        //public string NewEvent(string className, string desc, string date, string time, string location, string creatorId, string rsvpCount)
-        //{
-        //    if (Session["id"] != null)
-        //    {
-        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-        //        //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
-        //        //does is tell mySql server to return the primary key of the last inserted row.
-        //        string sqlSelect = "insert into events (className, descr, date, time, location, creatorId, rsvpCount) " +
-        //            "values(@classNameValue, @descValue, @dateValue, @timeValue, @locationValue, @creatorIdValue, @rsvpCountValue); SELECT LAST_INSERT_ID();";
-
-        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
-
-        //        //sqlCommand.Parameters.AddWithValue("@idRegisterValue", HttpUtility.UrlDecode(idRegister));
-        //        sqlCommand.Parameters.AddWithValue("@classNameValue", HttpUtility.UrlDecode(className));
-        //        sqlCommand.Parameters.AddWithValue("@descValue", HttpUtility.UrlDecode(desc));
-        //        sqlCommand.Parameters.AddWithValue("@dateValue", HttpUtility.UrlDecode(date));
-        //        sqlCommand.Parameters.AddWithValue("@timeValue", HttpUtility.UrlDecode(time));
-        //        sqlCommand.Parameters.AddWithValue("@locationValue", HttpUtility.UrlDecode(location));
-        //        sqlCommand.Parameters.AddWithValue("@creatorIdValue", HttpUtility.UrlDecode(creatorId));
-        //        sqlCommand.Parameters.AddWithValue("@rsvpCountValue", HttpUtility.UrlDecode(rsvpCount));
-        //        sqlConnection.Open();
-        //        //we're using a try/catch so that if the query errors out we can handle it gracefully
-        //        //by closing the connection and moving on
-        //        try
-        //        {
-        //            int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
-        //            //here, you could use this accountID for additional queries regarding
-        //            //the requested account.  Really this is just an example to show you
-        //            //a query where you get the primary key of the inserted row back from
-        //            //the database!
-        //            sqlConnection.Close();
-        //            return "success";
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            return "error" + e.Message;
-        //        }
-        //        //sqlConnection.Close();
-        //    }
-        //    else
-        //    {
-        //        return "Please log in";
-        //    }
-        //}
+        
 
         [WebMethod(EnableSession = true)]
         public Company[] LoadCompanies()
@@ -449,7 +403,45 @@ namespace ProjectTemplate
         }
 
 
+        //REQUEST MENTOR//
+        [WebMethod(EnableSession = true)]
+        public bool RequestMentor(string mentorId, string menteeId)
+        {
+            
 
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+            //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
+            //does is tell mySql server to return the primary key of the last inserted row.
+            string sqlSelect = "insert into MentorMenteeRequests (mentorId, menteeId) " +
+                "values(@mentorValue, @menteeValue); SELECT LAST_INSERT_ID();";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            //sqlCommand.Parameters.AddWithValue("@idRegister2Value", HttpUtility.UrlDecode(idRegister2));
+            sqlCommand.Parameters.AddWithValue("@mentorValue", Convert.ToInt32(HttpUtility.UrlDecode(mentorId)));
+            sqlCommand.Parameters.AddWithValue("@menteeValue", Convert.ToInt32(HttpUtility.UrlDecode(menteeId)));
+                   
+            sqlConnection.Open();
+            //we're using a try/catch so that if the query errors out we can handle it gracefully
+            //by closing the connection and moving on
+            try
+            {
+                int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
+                return true;
+                sqlConnection.Close();
+                //here, you could use this accountID for additional queries regarding
+                //the requested account.  Really this is just an example to show you
+                //a query where you get the primary key of the inserted row back from
+                //the database!
+            }
+            catch (Exception e)
+            {
+                return false;
+                sqlConnection.Close();
+            }
+            
+        }
 
 
         ////Update the RSVP count for events

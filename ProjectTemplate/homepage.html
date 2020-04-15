@@ -209,79 +209,66 @@
             window.location.assign("./loginPage.html")
         }
 
-
-
-        //function currentDate() {
-        //   var today = new Date();
-        //    var day = today.getDate()
-        //    var month = today.getMonth() + 1
-        //    var year = today.getFullYear()
-
-        //    month = (month < 10 ? "0" : "") + month;
-        //    day = (day < 10 ? "0" : "") + day;
-
-        //    var date = year + "-" + month + "-" + day
-
-        //    document.getElementById('newDate').value = date;
-        //}
-
-        //var rsvpCount;
-        //function RSVP(eventId) {
-        //    var webMethod = "ProjectServices.asmx/GetRSVPCount";
-        //    var parameters = "{\"eventId\":\"" + encodeURI(eventId) + "\"}";
+                       
+        var rsvpCount;
+        function requestMentor(mentorId) {
             
-        //    $.ajax({
-        //        async: false,
-        //        type: "POST",
-        //        url: webMethod,
-        //        data: parameters,
-        //        contentType: "application/json; charset=utf-8",
-        //        dataType: "json",
-        //        success: function (msg) {
-        //            if (msg.d) {
+            var webMethod = "ProjectServices.asmx/RequestMentor";
+            var menteeId = localStorage.getItem("sessionId");
+            var parameters = "{\"mentorId\":\"" + encodeURI(mentorId) + "\",\"menteeId\":\"" + encodeURI(menteeId) + "\"}";
+            
+            $.ajax({
+                async: false,
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d) {
                         
-        //                rsvpCount = Number(msg.d[0].rsvpCount);
-        //                rsvpCount++;
+                        alert("Request Sent");
+                        $("#button" + mentorId).disabled = true;
 
-        //            }
-        //            else {
-        //                alert("Error")
-        //            }
-        //        },
-        //        error: function (e) {
-        //            alert("Error with the server. Please try again.");
-        //        }
-        //    });
+                    }
+                    else {
+                        alert("Error")
+                    }
+                },
+                error: function (e) {
+                    alert("Error with the server. Please try again.");
+                }
+            });
 
             
 
-        //    var webMethod2 = "ProjectServices.asmx/UpdateRSVP";
-        //    var parameters2 = "{\"eventId\":\"" + encodeURI(eventId) + "\",\"rsvpCount\":\"" + encodeURI(rsvpCount) + "\"}";
+            //var webMethod2 = "ProjectServices.asmx/UpdateRSVP";
+            //var parameters2 = "{\"eventId\":\"" + encodeURI(eventId) + "\",\"rsvpCount\":\"" + encodeURI(rsvpCount) + "\"}";
 
-        //    $.ajax({
-        //        async: false,
-        //        type: "POST",
-        //        url: webMethod2,
-        //        data: parameters2,
-        //        contentType: "application/json; charset=utf-8",
-        //        dataType: "json",
-        //        success: function (msg) {
-        //            if (msg.d) {
+            //$.ajax({
+            //    async: false,
+            //    type: "POST",
+            //    url: webMethod2,
+            //    data: parameters2,
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    success: function (msg) {
+            //        if (msg.d) {
                         
-        //            }
-        //            else {
-        //                alert("Error")
-        //            }
-        //        },
-        //        error: function (e) {
-        //            alert("Error with the server. Please try again.");
-        //        }
-        //    });
+            //        }
+            //        else {
+            //            alert("Error")
+            //        }
+            //    },
+            //    error: function (e) {
+            //        alert("Error with the server. Please try again.");
+            //    }
+            //});
 
-        //    loadEvents();
-        //    document.getElementById(eventId).disabled = true;
+            //loadEvents();
+            //document.getElementById(eventId).disabled = true;
          
-        //}
+        }
 
         ////LogOffFunction
         function LogOff() {
@@ -309,36 +296,7 @@
             });
         }
 
-        //function newEvent() {
-        //    var webMethod = "ProjectServices.asmx/NewEvent";
-        //    var creatorId = localStorage.getItem("sessionId");
-        //    var className = $('#newClassName').val();
-        //    var desc = $('#newDesc').val();
-        //    var date = $('#newDate').val();
-        //    var time = $('#newTime').val();
-        //    var location = $('#newLocation').val();
-        //    var rsvpCount = 0;
-        //    var parameters = "{\"className\":\"" + encodeURI(className) + "\",\"desc\":\"" + encodeURI(desc) + "\",\"date\":\"" + encodeURI(date) + "\",\"time\":\"" + encodeURI(time) + "\",\"location\":\"" + encodeURI(location) + "\",\"creatorId\":\"" + encodeURI(creatorId) + "\",\"rsvpCount\":\"" + encodeURI(rsvpCount) + "\"}";
-        //    $.ajax({
-        //        type: "POST",
-        //        url: webMethod,
-        //        data: parameters,
-        //        contentType: "application/json; charset=utf-8",
-        //        dataType: "json",
-        //        success: function (msg) {
-        //            alert("Event added.");
-        //        },
-        //        error: function (e) {
-        //            alert("An error was encountered. Please try again.");
-        //        }
-        //    });
-        //}
-
-                
-        //var eventsArray;
-        //var usersArray;
-
-
+        
         function loadFilteredMentors() {
             var webMethod = "ProjectServices.asmx/GetFilteredProfiles";
             var uid = localStorage.getItem("sessionId");
@@ -379,7 +337,7 @@
                                     "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
                                     "<div class='requestMentorBar'>" +
                                     "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
-                                    "<button type=button class='requestButton'>Request Mentor</button>" +
+                                    "<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId + "';'>Request Mentor</button>" +
                                     "</div>" +
                                     "</div>" +
                                     "<hr>";
@@ -428,8 +386,8 @@
                                         "<b>Job:</b> " + profilesArray[i].jobTitle + "<br>" +
                                         "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
                                         "<div class='requestMentorBar'>"  +
-                                            "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
-                                            "<button type=button class='requestButton'>Request Mentor</button>" +
+                                    "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
+                                    "<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId  + "';'>Request Mentor</button>" +
                                         "</div>" +
                                     "</div>" +
                                     "<hr>";
