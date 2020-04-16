@@ -31,7 +31,7 @@
         <div class="menteeRequests">
             ACCEPT OR DECLINE MENTEES HERE
         </div>
-        
+
     </section>
 
     <section id="bothLayout">
@@ -67,7 +67,7 @@
 
     <section id="menteeLayout">
         <div class="menteeProfileDiv">
-            
+
         </div>
         <div class="mentorsDiv">
             <h2>Available Mentors</h2>
@@ -85,8 +85,8 @@
             <div class="mentorList">
 
             </div>
-        </div>   
-                
+        </div>
+
     </section>
 
     <footer>
@@ -94,11 +94,15 @@
         <p>Brittney Ginther, Janelle Halter, Ben Mack, Alexis Ross, Zack Wilson</p>
     </footer>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript">
+    <script>//when the user clicks on divm open the popup
+        function myFunction() {
+            var popup = document.getElementById("myPopup");
+            popup.classList.toggle("show")
+        }</script>
 
-              
-        document.addEventListener("load", loadPage());
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">document.addEventListener("load", loadPage());
 
 
         function loadPage() {
@@ -164,7 +168,7 @@
                             expertiseArray.push(filtersArray[i].expertise);
                         }
 
-                        
+
                         var uniquejobTitleArray = [];
                         $.each(jobTitleArray, function (i, el) {
                             if ($.inArray(el, uniquejobTitleArray) === -1) uniquejobTitleArray.push(el);
@@ -194,7 +198,7 @@
                         }
 
                     }
-  
+
 
                 },
                 error: function (e) {
@@ -202,21 +206,21 @@
                 }
             });
         }
-        
+
 
 
         function goToLogOn() {
             window.location.assign("./loginPage.html")
         }
 
-                       
+
         var rsvpCount;
         function requestMentor(mentorId) {
-            
+
             var webMethod = "ProjectServices.asmx/RequestMentor";
             var menteeId = localStorage.getItem("sessionId");
             var parameters = "{\"mentorId\":\"" + encodeURI(mentorId) + "\",\"menteeId\":\"" + encodeURI(menteeId) + "\"}";
-            
+
             $.ajax({
                 async: false,
                 type: "POST",
@@ -226,7 +230,7 @@
                 dataType: "json",
                 success: function (msg) {
                     if (msg.d) {
-                        
+
                         alert("Request Sent");
                         $("#button" + mentorId).disabled = true;
 
@@ -240,7 +244,7 @@
                 }
             });
 
-            
+
 
             //var webMethod2 = "ProjectServices.asmx/UpdateRSVP";
             //var parameters2 = "{\"eventId\":\"" + encodeURI(eventId) + "\",\"rsvpCount\":\"" + encodeURI(rsvpCount) + "\"}";
@@ -254,7 +258,7 @@
             //    dataType: "json",
             //    success: function (msg) {
             //        if (msg.d) {
-                        
+
             //        }
             //        else {
             //            alert("Error")
@@ -267,7 +271,7 @@
 
             //loadEvents();
             //document.getElementById(eventId).disabled = true;
-         
+
         }
 
         ////LogOffFunction
@@ -291,12 +295,12 @@
                     }
                 },
                 error: function (e) {
-                    
+
                 }
             });
         }
 
-        
+
         function loadFilteredMentors() {
             var webMethod = "ProjectServices.asmx/GetFilteredProfiles";
             var uid = localStorage.getItem("sessionId");
@@ -326,7 +330,7 @@
 
                         $(".mentorList").empty();
 
-                        
+
                         for (var i = 0; i < profilesArray.length; i++) {
 
                             if (profilesArray[i].registerId != localStorage.getItem("sessionId")) {
@@ -364,7 +368,7 @@
             var webMethod = "ProjectServices.asmx/GetProfiles";
             var uid = localStorage.getItem("sessionId");
             var parameters = "{\"sessionId\":\"" + encodeURI(uid) + "\"}";
-                   
+
             $.ajax({
                 type: "POST",
                 url: webMethod,
@@ -372,26 +376,28 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (msg) {
-                    
+
                     if (msg.d.length > 0) {
-                                                
+
                         profilesArray = msg.d;
-                        
+
                         for (var i = 0; i < profilesArray.length; i++) {
 
                             if (profilesArray[i].registerId != localStorage.getItem("sessionId")) {
 
                                 var profile = "<div class='profileCard'>" +
-                                        "<div class='nameBar'> <b>" + profilesArray[i].fName + " " + profilesArray[i].lName + "</b> </div> <br>" +
-                                        "<b>Job:</b> " + profilesArray[i].jobTitle + "<br>" +
-                                        "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
-                                        "<div class='requestMentorBar'>"  +
+                                    "<div class='nameBar'> <b>" + profilesArray[i].fName + " " + profilesArray[i].lName + "</b> </div> <br>" +
+                                    "<b>Job:</b> " + profilesArray[i].jobTitle + "<br>" +
+                                    "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
+                                    "<div class='requestMentorBar'>" +
                                     "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
-                                    "<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId  + "';'>Request Mentor</button>" +
-                                        "</div>" +
+                                    "<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId + "';'>Request Mentor</button>" +
+                                    //”<div class=’popup onclick=’myFunction()”+”EMAIL”+”<span class=’popuptext’ id=’myPopup’>”+”Popup Text…”+”</span>”+”</div>”+
+                                    "<button type=button onclick='myFunction()' class = 'popup'>EMAIL"+"</button >"+"<div class='popuptext' id=' myPopup'> " + "Popup text…" + "</div>"+
+                                    "</div>" +
                                     "</div>" +
                                     "<hr>";
-                                
+
                                 $(".mentorList").append(profile);
                             }
                         }
@@ -402,8 +408,7 @@
                     alert("Can't load mentors." + e);
                 }
             });
-        }
-    </script>
+        }</script>
 
 </body>
 </html>
