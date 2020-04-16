@@ -428,8 +428,9 @@ namespace ProjectTemplate
             try
             {
                 int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
-                return true;
+                
                 sqlConnection.Close();
+                return true;
                 //here, you could use this accountID for additional queries regarding
                 //the requested account.  Really this is just an example to show you
                 //a query where you get the primary key of the inserted row back from
@@ -437,12 +438,109 @@ namespace ProjectTemplate
             }
             catch (Exception e)
             {
-                return false;
+                
                 sqlConnection.Close();
+                return false;
             }
             
         }
 
+    
+
+        //getEventInfo
+        [WebMethod(EnableSession = true)]
+        public Profile[] LoadRequests(string sessionId)
+        {
+
+            //WE ONLY SHARE Events WITH LOGGED IN USERS!
+            if (Session["id"] != null)
+            {
+                DataTable sqlDt = new DataTable("register2");
+
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+                string sqlSelect = "select menteeId, fName, lName, jobTitle, expertise from register2 " +
+                                    "JOIN MentorMenteeRequests ON idregister2 = menteeId " +
+                                    "where mentorId = @mentorValue;";
+
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                sqlCommand.Parameters.AddWithValue("@mentorValue", Convert.ToInt32(HttpUtility.UrlDecode(sessionId)));
+                //gonna use this to fill a data table
+                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+                //filling the data table
+                sqlDa.Fill(sqlDt);
+
+                //loop through each row in the dataset, creating instances
+                //of our container class Event.  Fill each eveny with
+                //data from the rows, then dump them in a list.
+                List<Profile> profiles = new List<Profile>();
+                for (int i = 0; i < sqlDt.Rows.Count; i++)
+                {
+
+                    profiles.Add(new Profile
+                    {
+                        registerId = Convert.ToInt32(sqlDt.Rows[i]["menteeId"]),
+                        fName = sqlDt.Rows[i]["fName"].ToString(),
+                        lName = sqlDt.Rows[i]["lName"].ToString(),
+                        jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
+                        expertise = sqlDt.Rows[i]["expertise"].ToString(),
+                      
+                    });
+                }
+
+                //convert the list of events to an array and return!
+                return profiles.ToArray();
+            }
+            else
+            {
+                //if they're not logged in, return an empty event
+                return new Profile[0];
+            }
+        }
+
+
+        //REQUEST MENTOR//
+        [WebMethod(EnableSession = true)]
+        public bool DenyRequest(string mentorId, string requestId)
+        {
+
+
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+            //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
+            //does is tell mySql server to return the primary key of the last inserted row.
+            string sqlSelect = "delete from MentorMenteeRequests where mentorId = @mentorValue and menteeId = @requestValue;";
+
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            //sqlCommand.Parameters.AddWithValue("@idRegister2Value", HttpUtility.UrlDecode(idRegister2));
+            sqlCommand.Parameters.AddWithValue("@mentorValue", Convert.ToInt32(HttpUtility.UrlDecode(mentorId)));
+            sqlCommand.Parameters.AddWithValue("@requestValue", Convert.ToInt32(HttpUtility.UrlDecode(requestId)));
+
+            sqlConnection.Open();
+            //we're using a try/catch so that if the query errors out we can handle it gracefully
+            //by closing the connection and moving on
+            try
+            {
+                int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
+
+                sqlConnection.Close();
+                return true;
+                //here, you could use this accountID for additional queries regarding
+                //the requested account.  Really this is just an example to show you
+                //a query where you get the primary key of the inserted row back from
+                //the database!
+            }
+            catch (Exception e)
+            {
+
+                sqlConnection.Close();
+                return false;
+            }
+
+        }
 
         ////Update the RSVP count for events
         //[WebMethod(EnableSession = true)]
@@ -586,56 +684,7 @@ namespace ProjectTemplate
             }
         }
 
-
-        //// Lists of all users for the homepage. 
-        //[WebMethod(EnableSession = true)]
-        //public Profile[] UserList()
-        //{
-
-        //    //WE ONLY SHARE Events WITH LOGGED IN USERS!
-        //    if (Session["id"] != null)
-        //    {
-        //        DataTable sqlDt = new DataTable("Register");
-
-        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-        //        string sqlSelect = "select idRegister, fName, lName from Register;";
-
-        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
-
-        //        //gonna use this to fill a data table
-        //        MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
-        //        //filling the data table
-        //        sqlDa.Fill(sqlDt);
-
-        //        //loop through each row in the dataset, creating instances
-        //        //of our container class Event.  Fill each eveny with
-        //        //data from the rows, then dump them in a list.
-        //        List<Profile> profile = new List<Profile>();
-        //        for (int i = 0; i < sqlDt.Rows.Count; i++)
-        //        {
-
-        //            profile.Add(new Profile
-        //            {
-        //                registerId = Convert.ToInt32(sqlDt.Rows[i]["idregister"]),
-        //                fName = sqlDt.Rows[i]["fName"].ToString(),
-        //                lName = sqlDt.Rows[i]["lName"].ToString(),
-        //                year = "",
-        //                college = "",
-        //                campus = ""
-        //            });
-        //        }
-        //        //convert the list of events to an array and return!
-        //        return profile.ToArray();
-        //    }
-        //    else
-        //    {
-        //        //if they're not logged in, return an empty event
-        //        return new Profile[0];
-        //    }
-        //}
-
-
+                
         //protected void UploadButton_Click(object sender, EventArgs e)
         //{
         //    if (FileUploadControl.HasFile)

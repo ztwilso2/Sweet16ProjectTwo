@@ -133,12 +133,14 @@
             $("#mentorLayout").css("display", "none");
             loadMentors();
             loadFilters();
+            loadRequests();
         }
 
         function loadMentorPage() {
             $("#menteeLayout").css("display", "none");
             $("#bothLayout").css("display", "none");
             $("#mentorLayout").css("display", "block");
+            loadRequests();
         }
 
         function loadFilters() {
@@ -214,12 +216,93 @@
         }
 
 
-        var rsvpCount;
+        
         function requestMentor(mentorId) {
 
             var webMethod = "ProjectServices.asmx/RequestMentor";
             var menteeId = localStorage.getItem("sessionId");
             var parameters = "{\"mentorId\":\"" + encodeURI(mentorId) + "\",\"menteeId\":\"" + encodeURI(menteeId) + "\"}";
+            if ($("#button" + mentorId).prop('disabled') == false) {
+                $.ajax({
+                    async: false,
+                    type: "POST",
+                    url: webMethod,
+                    data: parameters,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (msg) {
+                        if (msg.d) {
+
+                            alert("Request Sent");
+                            
+                            $("#button" + mentorId).prop('disabled', true);
+                            
+                        }
+                        else {
+                            alert("Error")
+                        }
+                    },
+                    error: function (e) {
+                        alert("Error with the server. Please try again.");
+                    }
+                });
+            }
+        }
+
+
+        function loadRequests() {
+
+            var webMethod = "ProjectServices.asmx/LoadRequests";
+            var uid = localStorage.getItem("sessionId");
+            var parameters = "{\"sessionId\":\"" + encodeURI(uid) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+
+                    if (msg.d.length > 0) {
+
+                        tempRequestsArray = msg.d;
+
+                        var requestsArray = Array.from(new Set(tempRequestsArray.map(a => a.registerId)))
+                            .map(registerId => {
+                                return tempRequestsArray.find(a => a.registerId === registerId)
+                            })
+
+                        for (var i = 0; i < requestsArray.length; i++) {
+
+                            var profile = "<div class='requestCard'>" +
+                                "<div class='nameBar'> <b>" + requestsArray[i].fName + " " + requestsArray[i].lName + "</b> </div> <br>" +
+                                "<b>Job:</b> " + requestsArray[i].jobTitle + "<br>" +
+                                "<b>Expertise</b>: " + requestsArray[i].expertise + "<br>" +
+                                "<div class='acceptBar'>" +
+                                "<button type=button class='denyButton' value='" + requestsArray[i].registerId + "' onclick='denyRequests(this.value)';'>Deny</button>" +
+                                "<button type=button class='acceptButton' value='" + requestsArray[i].registerId + "' onclick='function(){alert('pressed');}';'>Accept</button>" +
+                                "</div>" +
+                                "</div>" +
+                                "<hr>";
+
+                            $(".menteeRequests").append(profile);
+
+                        }
+
+                    }
+                },
+                error: function (e) {
+                    alert("Can't load requests." + e);
+                }
+            });
+        }
+
+        function denyRequests(requestId) {
+
+            var webMethod = "ProjectServices.asmx/DenyRequest";
+            var mentorId = localStorage.getItem("sessionId");
+            var parameters = "{\"mentorId\":\"" + encodeURI(mentorId) + "\",\"requestId\":\"" + encodeURI(requestId) + "\"}";
 
             $.ajax({
                 async: false,
@@ -231,8 +314,10 @@
                 success: function (msg) {
                     if (msg.d) {
 
-                        alert("Request Sent");
-                        $("#button" + mentorId).disabled = true;
+                        alert("Request Denied");
+                        $(".menteeRequests").empty();
+                        loadRequests();
+                        
 
                     }
                     else {
@@ -243,9 +328,7 @@
                     alert("Error with the server. Please try again.");
                 }
             });
-
-
-
+        }
             //var webMethod2 = "ProjectServices.asmx/UpdateRSVP";
             //var parameters2 = "{\"eventId\":\"" + encodeURI(eventId) + "\",\"rsvpCount\":\"" + encodeURI(rsvpCount) + "\"}";
 
@@ -272,7 +355,7 @@
             //loadEvents();
             //document.getElementById(eventId).disabled = true;
 
-        }
+        
 
         ////LogOffFunction
         function LogOff() {
@@ -408,7 +491,8 @@
                     alert("Can't load mentors." + e);
                 }
             });
-        }</script>
+        }
+    </script>
 
 </body>
 </html>
