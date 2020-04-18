@@ -24,24 +24,41 @@
     </header>
 
     <section id="mentorLayout">
-        <div class="currentMentees">
+        
+        <div class="currentMenteesDiv">
             THESE ARE CURRENT MENTEES
+
+            <div class="currentMentees">
+
+            </div>
         </div>
 
-        <div class="menteeRequests">
+        <div class="menteeRequestsDiv">
             ACCEPT OR DECLINE MENTEES HERE
+
+            <div class="menteeRequests">
+
+            </div>
         </div>
 
     </section>
 
     <section id="bothLayout">
         <div class="mentorSideDiv">
-            <div class="currentMentees">
+            <div class="currentMenteesDiv">
                 THESE ARE CURRENT MENTEES
+
+                <div class="currentMentees">
+
+                </div>
             </div>
 
-            <div class="menteeRequests">
+            <div class="menteeRequestsDiv">
                 ACCEPT OR DECLINE MENTEES HERE
+
+                <div class="menteeRequests">
+
+                </div>
             </div>
         </div>
         <div class="menteeSideDiv">
@@ -134,6 +151,7 @@
             loadMentors();
             loadFilters();
             loadRequests();
+            loadMentees();
         }
 
         function loadMentorPage() {
@@ -141,6 +159,7 @@
             $("#bothLayout").css("display", "none");
             $("#mentorLayout").css("display", "block");
             loadRequests();
+            loadMentees();
         }
 
         function loadFilters() {
@@ -280,8 +299,8 @@
                                 "<b>Job:</b> " + requestsArray[i].jobTitle + "<br>" +
                                 "<b>Expertise</b>: " + requestsArray[i].expertise + "<br>" +
                                 "<div class='acceptBar'>" +
-                                "<button type=button class='denyButton' value='" + requestsArray[i].registerId + "' onclick='denyRequests(this.value)';'>Deny</button>" +
-                                "<button type=button class='acceptButton' value='" + requestsArray[i].registerId + "' onclick='function(){alert('pressed');}';'>Accept</button>" +
+                                "<button type=button class='denyButton' value='" + requestsArray[i].registerId + "' onclick='denyRequests(this.value);'>Deny</button>" +
+                                "<button type=button class='acceptButton' value='" + requestsArray[i].registerId + "' onclick='acceptRequests(this.value);'>Accept</button>" +
                                 "</div>" +
                                 "</div>" +
                                 "<hr>";
@@ -315,7 +334,7 @@
                     if (msg.d) {
 
                         alert("Request Denied");
-                        $(".menteeRequests").empty();
+                        $(".menteeRequests").empty()
                         loadRequests();
                         
 
@@ -326,6 +345,89 @@
                 },
                 error: function (e) {
                     alert("Error with the server. Please try again.");
+                }
+            });
+        }
+
+
+
+        function acceptRequests(requestId) {
+
+            var webMethod = "ProjectServices.asmx/AcceptRequest";
+            var mentorId = localStorage.getItem("sessionId");
+            var parameters = "{\"mentorId\":\"" + encodeURI(mentorId) + "\",\"requestId\":\"" + encodeURI(requestId) + "\"}";
+
+            $.ajax({
+                async: false,
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d) {
+
+                        alert("Request Accepted");
+                        $(".menteeRequests").empty()
+                        $(".currentMentees").empty()
+                        loadRequests();
+                        loadMentees();
+
+
+                    }
+                    else {
+                        alert("Error")
+                    }
+                },
+                error: function (e) {
+                    alert("Error with the server. Please try again.");
+                }
+            });
+        }
+
+
+
+        function loadMentees() {
+
+            var webMethod = "ProjectServices.asmx/LoadMentees";
+            var uid = localStorage.getItem("sessionId");
+            var parameters = "{\"sessionId\":\"" + encodeURI(uid) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+
+                    if (msg.d.length > 0) {
+
+                        tempRequestsArray = msg.d;
+
+                        var requestsArray = Array.from(new Set(tempRequestsArray.map(a => a.registerId)))
+                            .map(registerId => {
+                                return tempRequestsArray.find(a => a.registerId === registerId)
+                            })
+
+                        for (var i = 0; i < requestsArray.length; i++) {
+
+                            var profile = "<div class='requestCard'>" +
+                                "<div class='nameBar'> <b>" + requestsArray[i].fName + " " + requestsArray[i].lName + "</b> </div> <br>" +
+                                "<b>Job:</b> " + requestsArray[i].jobTitle + "<br>" +
+                                "<b>Expertise</b>: " + requestsArray[i].expertise + "<br>" +
+                                "<div class='acceptBar'>" +
+                                "</div>" +
+                                "<hr>";
+
+                            $(".currentMentees").append(profile);
+
+                        }
+
+                    }
+                },
+                error: function (e) {
+                    alert("Can't load requests." + e);
                 }
             });
         }
