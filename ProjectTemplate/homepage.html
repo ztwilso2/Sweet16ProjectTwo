@@ -283,10 +283,12 @@
                 dataType: "json",
                 success: function (msg) {
 
+                    $(".menteeRequests").empty()
+
                     if (msg.d.length > 0) {
 
                         tempRequestsArray = msg.d;
-
+                        
                         var requestsArray = Array.from(new Set(tempRequestsArray.map(a => a.registerId)))
                             .map(registerId => {
                                 return tempRequestsArray.find(a => a.registerId === registerId)
@@ -365,15 +367,20 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (msg) {
-                    if (msg.d) {
+                    if (msg.d > -1) {
 
                         alert("Request Accepted");
-                        $(".menteeRequests").empty()
-                        $(".currentMentees").empty()
+                        
+                        
                         loadRequests();
                         loadMentees();
 
+                        var menteeCount = msg.d 
+                        menteeCount++; 
 
+                        updateMenteeCount(mentorId, menteeCount);
+
+                        
                     }
                     else {
                         alert("Error")
@@ -385,6 +392,34 @@
             });
         }
 
+
+        function updateMenteeCount(mentorId, menteeCount) {
+
+            var webMethod2 = "ProjectServices.asmx/UpdateMenteeCount";
+            var parameters2 = "{\"userId\":\"" + encodeURI(mentorId) + "\",\"menteeCount\":\"" + encodeURI(menteeCount) + "\"}";
+
+            $.ajax({
+                async: false,
+                type: "POST",
+                url: webMethod2,
+                data: parameters2,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d) {
+
+                    }
+                    else {
+                        alert("Error")
+                    }
+                },
+                error: function (e) {
+                    alert("Error with the server. Please try again.");
+                }
+            });
+
+            
+        }
 
 
         function loadMentees() {
@@ -401,10 +436,12 @@
                 dataType: "json",
                 success: function (msg) {
 
+                    $(".currentMentees").empty()
+
                     if (msg.d.length > 0) {
 
                         tempRequestsArray = msg.d;
-
+                        
                         var requestsArray = Array.from(new Set(tempRequestsArray.map(a => a.registerId)))
                             .map(registerId => {
                                 return tempRequestsArray.find(a => a.registerId === registerId)
@@ -431,31 +468,7 @@
                 }
             });
         }
-            //var webMethod2 = "ProjectServices.asmx/UpdateRSVP";
-            //var parameters2 = "{\"eventId\":\"" + encodeURI(eventId) + "\",\"rsvpCount\":\"" + encodeURI(rsvpCount) + "\"}";
-
-            //$.ajax({
-            //    async: false,
-            //    type: "POST",
-            //    url: webMethod2,
-            //    data: parameters2,
-            //    contentType: "application/json; charset=utf-8",
-            //    dataType: "json",
-            //    success: function (msg) {
-            //        if (msg.d) {
-
-            //        }
-            //        else {
-            //            alert("Error")
-            //        }
-            //    },
-            //    error: function (e) {
-            //        alert("Error with the server. Please try again.");
-            //    }
-            //});
-
-            //loadEvents();
-            //document.getElementById(eventId).disabled = true;
+            
 
         
 
@@ -485,7 +498,7 @@
             });
         }
 
-
+        var filtered = false;
         function loadFilteredMentors() {
             var webMethod = "ProjectServices.asmx/GetFilteredProfiles";
             var uid = localStorage.getItem("sessionId");
@@ -514,25 +527,30 @@
                         profilesArray = msg.d;
 
                         $(".mentorList").empty();
+                        filtered = true;
 
 
                         for (var i = 0; i < profilesArray.length; i++) {
 
                             if (profilesArray[i].registerId != localStorage.getItem("sessionId")) {
 
-                                var profile = "<div class='profileCard'>" +
-                                    "<div class='nameBar'> <b>" + profilesArray[i].fName + " " + profilesArray[i].lName + "</b> </div> <br>" +
-                                    "<b>Job:</b> " + profilesArray[i].jobTitle + "<br>" +
-                                    "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
-                                    "<div class='requestMentorBar'>" +
-                                    "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
-                                    "<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId + "';'>Request Mentor</button>" +
-                                    "</div>" +
-                                    "</div>" +
-                                    "<hr>";
+                                if (profilesArray[i].numOfMentees < 3) {
 
+                                    var profile = "<div class='profileCard'>" +
+                                        "<div class='nameBar'> <b>" + profilesArray[i].fName + " " + profilesArray[i].lName + "</b> </div> <br>" +
+                                        "<b>Job:</b> " + profilesArray[i].jobTitle + "<br>" +
+                                        "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
+                                        "<div class='requestMentorBar'>" +
+                                        "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
+                                        "<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId + "';'>Request Mentor</button>" +
+                                        //”<div class=’popup onclick=’myFunction()”+”EMAIL”+”<span class=’popuptext’ id=’myPopup’>”+”Popup Text…”+”</span>”+”</div>”+
+                                        "<button type=button onclick='myFunction()' class = 'popup'>EMAIL" + "</button >" + "<div class='popuptext' id=' myPopup'> " + "Popup text…" + "</div>" +
+                                        "</div>" +
+                                        "</div>" +
+                                        "<hr>";
 
-                                $(".mentorList").append(profile);
+                                    $(".mentorList").append(profile);
+                                }
 
                             }
                         }
@@ -569,21 +587,23 @@
                         for (var i = 0; i < profilesArray.length; i++) {
 
                             if (profilesArray[i].registerId != localStorage.getItem("sessionId")) {
+                                if (profilesArray[i].numOfMentees < 3) {
 
-                                var profile = "<div class='profileCard'>" +
-                                    "<div class='nameBar'> <b>" + profilesArray[i].fName + " " + profilesArray[i].lName + "</b> </div> <br>" +
-                                    "<b>Job:</b> " + profilesArray[i].jobTitle + "<br>" +
-                                    "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
-                                    "<div class='requestMentorBar'>" +
-                                    "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
-                                    "<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId + "';'>Request Mentor</button>" +
-                                    //”<div class=’popup onclick=’myFunction()”+”EMAIL”+”<span class=’popuptext’ id=’myPopup’>”+”Popup Text…”+”</span>”+”</div>”+
-                                    "<button type=button onclick='myFunction()' class = 'popup'>EMAIL"+"</button >"+"<div class='popuptext' id=' myPopup'> " + "Popup text…" + "</div>"+
-                                    "</div>" +
-                                    "</div>" +
-                                    "<hr>";
+                                    var profile = "<div class='profileCard'>" +
+                                        "<div class='nameBar'> <b>" + profilesArray[i].fName + " " + profilesArray[i].lName + "</b> </div> <br>" +
+                                        "<b>Job:</b> " + profilesArray[i].jobTitle + "<br>" +
+                                        "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
+                                        "<div class='requestMentorBar'>" +
+                                        "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
+                                        "<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId + "';'>Request Mentor</button>" +
+                                        //”<div class=’popup onclick=’myFunction()”+”EMAIL”+”<span class=’popuptext’ id=’myPopup’>”+”Popup Text…”+”</span>”+”</div>”+
+                                        "<button type=button onclick='myFunction()' class = 'popup'>EMAIL" + "</button >" + "<div class='popuptext' id=' myPopup'> " + "Popup text…" + "</div>" +
+                                        "</div>" +
+                                        "</div>" +
+                                        "<hr>";
 
-                                $(".mentorList").append(profile);
+                                    $(".mentorList").append(profile);
+                                }
                             }
                         }
 

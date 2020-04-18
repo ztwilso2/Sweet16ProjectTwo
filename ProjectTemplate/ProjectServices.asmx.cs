@@ -599,7 +599,7 @@ namespace ProjectTemplate
 
         //ACCEPT MENTEE REQUEST//
         [WebMethod(EnableSession = true)]
-        public bool AcceptRequest(string mentorId, string requestId)
+        public int AcceptRequest(string mentorId, string requestId)
         {
 
 
@@ -608,7 +608,8 @@ namespace ProjectTemplate
             //does is tell mySql server to return the primary key of the last inserted row.
             string sqlSelect = "insert into MentorMenteePairs (menteeId, mentorId)" +
                                "select menteeId, mentorId from MentorMenteeRequests where mentorId = @mentorValue and menteeId = @requestValue limit 1;" +
-                               "delete from MentorMenteeRequests where mentorId = @mentorValue and menteeId = @requestValue;";
+                               "delete from MentorMenteeRequests where mentorId = @mentorValue and menteeId = @requestValue;" +
+                               "select numofMentees from register2 where idregister2 = @mentorValue;";
 
             MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
             MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
@@ -622,10 +623,10 @@ namespace ProjectTemplate
             //by closing the connection and moving on
             try
             {
-                int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
+                int menteeCount = Convert.ToInt32(sqlCommand.ExecuteScalar());
 
                 sqlConnection.Close();
-                return true;
+                return menteeCount;
                 //here, you could use this accountID for additional queries regarding
                 //the requested account.  Really this is just an example to show you
                 //a query where you get the primary key of the inserted row back from
@@ -635,99 +636,55 @@ namespace ProjectTemplate
             {
 
                 sqlConnection.Close();
-                return false;
+                return -1;
             }
 
         }
 
-        ////Update the RSVP count for events
-        //[WebMethod(EnableSession = true)]
-        //public Event[] GetRSVPCount(string eventId)
-        //{
 
-        //    //WE ONLY SHARE Events WITH LOGGED IN USERS!
-        //    if (Session["id"] != null)
-        //    {
-        //        DataTable sqlDt = new DataTable("events");
+        //Update Mentee count
+        [WebMethod(EnableSession = true)]
+        public bool UpdateMenteeCount(string userId, string menteeCount)
+        {
+            //WRAPPING THE WHOLE THING IN AN IF STATEMENT TO CHECK IF THEY ARE AN ADMIN!
+            if (Session["id"] != null)
+            {
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+                //this is a simple update, with parameters to pass in values
+                string sqlSelect = "update register2 set numofMentees = @menteeCountValue where idregister2 = @mentorId";
 
-        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-        //        string sqlSelect = "select rsvpCount from events where idevents = @eventIdValue;";
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
 
-        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
-
-        //        sqlCommand.Parameters.AddWithValue("@eventIdValue", HttpUtility.UrlDecode(eventId));
-        //        //gonna use this to fill a data table
-        //        MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
-        //        //filling the data table
-        //        sqlDa.Fill(sqlDt);
-
-        //        //loop through each row in the dataset, creating instances
-        //        //of our container class Event.  Fill each eveny with
-        //        //data from the rows, then dump them in a list.
-        //        List<Event> events = new List<Event>();
-        //        for (int i = 0; i < sqlDt.Rows.Count; i++)
-        //        {
-
-        //            events.Add(new Event
-        //            {
-        //                rsvpCount = Convert.ToInt32(sqlDt.Rows[i]["rsvpCount"])
-        //            });
-        //        }
-        //        //convert the list of events to an array and return!
-        //        return events.ToArray();
-        //    }
-        //    else
-        //    {
-        //        //if they're not logged in, return an empty event
-        //        return new Event[0];
-        //    }
-        //}
+                sqlCommand.Parameters.AddWithValue("@mentorId", HttpUtility.UrlDecode(userId));
+                sqlCommand.Parameters.AddWithValue("@menteeCountValue", Convert.ToInt32(HttpUtility.UrlDecode(menteeCount)));
 
 
-        ////Update RSVP count
-        //[WebMethod(EnableSession = true)]
-        //public string UpdateRSVP(string eventId, string rsvpCount)
-        //{
-        //    //WRAPPING THE WHOLE THING IN AN IF STATEMENT TO CHECK IF THEY ARE AN ADMIN!
-        //    if (Session["id"] != null)
-        //    {
-        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-        //        //this is a simple update, with parameters to pass in values
-        //        string sqlSelect = "update events set rsvpCount = @rsvpCountValue where idevents = @eventIdValue";
+                sqlConnection.Open();
+                //we're using a try/catch so that if the query errors out we can handle it gracefully
+                //by closing the connection and moving on
+                try
+                {
 
-        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+                    sqlCommand.ExecuteNonQuery();
+                    sqlConnection.Close();
+                    return true;
 
-        //        sqlCommand.Parameters.AddWithValue("@eventIdValue", HttpUtility.UrlDecode(eventId));
-        //        sqlCommand.Parameters.AddWithValue("@rsvpCountValue", HttpUtility.UrlDecode(rsvpCount));
-
-
-        //        sqlConnection.Open();
-        //        //we're using a try/catch so that if the query errors out we can handle it gracefully
-        //        //by closing the connection and moving on
-        //        try
-        //        {
-
-        //            sqlCommand.ExecuteNonQuery();
-        //            sqlConnection.Close();
-        //            return "Success";
-
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            sqlConnection.Close();
-        //            return "Failure";
-        //        }
+                }
+                catch (Exception e)
+                {
+                    sqlConnection.Close();
+                    return false;
+                }
 
 
 
-        //    }
-        //    else
-        //    {
-        //        return "Log in please";
-        //    }
-        //}
+            }
+            else
+            {
+                return false;
+            }
+        }
 
 
         //getProfileInfo
