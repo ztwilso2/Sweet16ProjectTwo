@@ -555,6 +555,60 @@ namespace ProjectTemplate
         }
 
 
+        //LOAD MENTEES
+        [WebMethod(EnableSession = true)]
+        public Profile[] LoadMentors(string sessionId)
+        {
+
+            //WE ONLY SHARE Events WITH LOGGED IN USERS!
+            if (Session["id"] != null)
+            {
+                DataTable sqlDt = new DataTable("register2");
+
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+                string sqlSelect = "select mentorId, fName, lName, jobTitle, expertise from register2 " +
+                                    "JOIN MentorMenteePairs ON idregister2 = mentorId " +
+                                    "where menteeId = @menteeValue;";
+
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                sqlCommand.Parameters.AddWithValue("@menteeValue", Convert.ToInt32(HttpUtility.UrlDecode(sessionId)));
+                //gonna use this to fill a data table
+                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+                //filling the data table
+                sqlDa.Fill(sqlDt);
+
+                //loop through each row in the dataset, creating instances
+                //of our container class Event.  Fill each eveny with
+                //data from the rows, then dump them in a list.
+                List<Profile> profiles = new List<Profile>();
+                for (int i = 0; i < sqlDt.Rows.Count; i++)
+                {
+
+                    profiles.Add(new Profile
+                    {
+                        registerId = Convert.ToInt32(sqlDt.Rows[i]["mentorId"]),
+                        fName = sqlDt.Rows[i]["fName"].ToString(),
+                        lName = sqlDt.Rows[i]["lName"].ToString(),
+                        jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
+                        expertise = sqlDt.Rows[i]["expertise"].ToString(),
+
+                    });
+                }
+
+                //convert the list of events to an array and return!
+                return profiles.ToArray();
+            }
+            else
+            {
+                //if they're not logged in, return an empty event
+                return new Profile[0];
+            }
+        }
+
+
         //DENY MENTEE REQUEST//
         [WebMethod(EnableSession = true)]
         public bool DenyRequest(string mentorId, string requestId)

@@ -63,6 +63,13 @@
         </div>
         <div class="menteeSideDiv">
             <div class="mentorsDiv">
+                <div class="currentMentorsDiv">
+                    <h2>Current Mentors</h2>
+                    <div class="currentMentors">
+
+                    </div>
+                </div>
+
                 <h2>Available Mentors</h2>
 
                 <form class="mentorFilter">
@@ -83,10 +90,16 @@
     </section>
 
     <section id="menteeLayout">
-        <div class="menteeProfileDiv">
-
-        </div>
+        
         <div class="mentorsDiv">
+
+            <div class="currentMentorsDiv">
+                <h2>Current Mentors</h2>
+                <div class="currentMentors">
+
+                </div>
+            </div>
+
             <h2>Available Mentors</h2>
 
             <form class="mentorFilter">
@@ -119,7 +132,9 @@
 
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script type="text/javascript">document.addEventListener("load", loadPage());
+    <script type="text/javascript">
+
+        document.addEventListener("load", loadPage());
 
 
         function loadPage() {
@@ -141,6 +156,7 @@
             $("#bothLayout").css("display", "none");
             $("#mentorLayout").css("display", "none");
             loadMentors();
+            loadCurrentMentors();
             loadFilters();
         }
 
@@ -149,6 +165,7 @@
             $("#bothLayout").css("display", "block");
             $("#mentorLayout").css("display", "none");
             loadMentors();
+            loadCurrentMentors();
             loadFilters();
             loadRequests();
             loadMentees();
@@ -449,15 +466,61 @@
 
                         for (var i = 0; i < requestsArray.length; i++) {
 
-                            var profile = "<div class='requestCard'>" +
+                            var profile = "<div class='menteeCard'>" +
                                 "<div class='nameBar'> <b>" + requestsArray[i].fName + " " + requestsArray[i].lName + "</b> </div> <br>" +
                                 "<b>Job:</b> " + requestsArray[i].jobTitle + "<br>" +
                                 "<b>Expertise</b>: " + requestsArray[i].expertise + "<br>" +
-                                "<div class='acceptBar'>" +
                                 "</div>" +
                                 "<hr>";
 
                             $(".currentMentees").append(profile);
+
+                        }
+
+                    }
+                },
+                error: function (e) {
+                    alert("Can't load requests." + e);
+                }
+            });
+        }
+
+
+        function loadCurrentMentors() {
+
+            var webMethod = "ProjectServices.asmx/LoadMentors";
+            var uid = localStorage.getItem("sessionId");
+            var parameters = "{\"sessionId\":\"" + encodeURI(uid) + "\"}";
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+
+                    $(".currentMentors").empty()
+
+                    if (msg.d.length > 0) {
+
+                        tempRequestsArray = msg.d;
+
+                        var requestsArray = Array.from(new Set(tempRequestsArray.map(a => a.registerId)))
+                            .map(registerId => {
+                                return tempRequestsArray.find(a => a.registerId === registerId)
+                            })
+
+                        for (var i = 0; i < requestsArray.length; i++) {
+
+                            var profile = "<div class='mentorCard'>" +
+                                "<div class='nameBar'> <b>" + requestsArray[i].fName + " " + requestsArray[i].lName + "</b> </div> <br>" +
+                                "<b>Job:</b> " + requestsArray[i].jobTitle + "<br>" +
+                                "<b>Expertise</b>: " + requestsArray[i].expertise + "<br>" +
+                                "</div>" +
+                                "<hr>";
+
+                            $(".currentMentors").append(profile);
 
                         }
 
