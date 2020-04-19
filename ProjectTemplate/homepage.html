@@ -26,7 +26,7 @@
     <section id="mentorLayout">
         
         <div class="currentMenteesDiv">
-            THESE ARE CURRENT MENTEES
+            <h2>Current Mentees</h2>
 
             <div class="currentMentees">
 
@@ -34,7 +34,7 @@
         </div>
 
         <div class="menteeRequestsDiv">
-            ACCEPT OR DECLINE MENTEES HERE
+            <h2>Mentee Requests</h2>
 
             <div class="menteeRequests">
 
@@ -46,7 +46,7 @@
     <section id="bothLayout">
         <div class="mentorSideDiv">
             <div class="currentMenteesDiv">
-                THESE ARE CURRENT MENTEES
+                <h2>Current Mentees</h2>
 
                 <div class="currentMentees">
 
@@ -54,36 +54,39 @@
             </div>
 
             <div class="menteeRequestsDiv">
-                ACCEPT OR DECLINE MENTEES HERE
+                <h2>Mentee Requests</h2>
 
                 <div class="menteeRequests">
+
+                </div>
+            </div>
+            <div class="currentMentorsDiv">
+                <h2>Current Mentors</h2>
+                <div class="currentMentors">
 
                 </div>
             </div>
         </div>
         <div class="menteeSideDiv">
             <div class="mentorsDiv">
-                <div class="currentMentorsDiv">
-                    <h2>Current Mentors</h2>
-                    <div class="currentMentors">
+                
+
+                <div class="mentorListDiv">
+                    <h2>Available Mentors</h2>
+
+                    <form class="mentorFilter">
+                        <select id="menteeJobTitleFilter">
+                            <option value="default">--</option>
+                        </select>
+                        <select id="menteeExpertiseFilter">
+                            <option value="default">--</option>
+                        </select>
+                        <button type="button" onclick="loadFilteredMentors()">Filter</button>
+                    </form>
+
+                    <div class="mentorList">
 
                     </div>
-                </div>
-
-                <h2>Available Mentors</h2>
-
-                <form class="mentorFilter">
-                    <select id="bothJobTitleFilter">
-                        <option value="default">--</option>
-                    </select>
-                    <select id="bothExpertiseFilter">
-                        <option value="default">--</option>
-                    </select>
-                    <button type="button" onclick="loadFilteredMentors()">Filter</button>
-                </form>
-
-                <div class="mentorList">
-
                 </div>
             </div>
         </div>
@@ -100,20 +103,22 @@
                 </div>
             </div>
 
-            <h2>Available Mentors</h2>
+            <div class="mentorListDiv">
+                <h2>Available Mentors</h2>
 
-            <form class="mentorFilter">
-                <select id="menteeJobTitleFilter">
-                    <option value="default">--</option>
-                </select>
-                <select id="menteeExpertiseFilter">
-                    <option value="default">--</option>
-                </select>
-                <button type="button" onclick="loadFilteredMentors()">Filter</button>
-            </form>
+                <form class="mentorFilter">
+                    <select id="menteeJobTitleFilter">
+                        <option value="default">--</option>
+                    </select>
+                    <select id="menteeExpertiseFilter">
+                        <option value="default">--</option>
+                    </select>
+                    <button type="button" onclick="loadFilteredMentors()">Filter</button>
+                </form>
 
-            <div class="mentorList">
+                <div class="mentorList">
 
+                </div>
             </div>
         </div>
 
@@ -467,7 +472,7 @@
                         for (var i = 0; i < requestsArray.length; i++) {
 
                             var profile = "<div class='menteeCard'>" +
-                                "<div class='nameBar'> <b>" + requestsArray[i].fName + " " + requestsArray[i].lName + "</b> </div> <br>" +
+                                "<div class='currentNameBar' onclick='loadProfile(" + requestsArray[i].registerId + ")'> <b>" + requestsArray[i].fName + " " + requestsArray[i].lName + "</b> </div> <br>" +
                                 "<b>Job:</b> " + requestsArray[i].jobTitle + "<br>" +
                                 "<b>Expertise</b>: " + requestsArray[i].expertise + "<br>" +
                                 "</div>" +
@@ -514,7 +519,7 @@
                         for (var i = 0; i < requestsArray.length; i++) {
 
                             var profile = "<div class='mentorCard'>" +
-                                "<div class='nameBar'> <b>" + requestsArray[i].fName + " " + requestsArray[i].lName + "</b> </div> <br>" +
+                                "<div class='currentNameBar' onclick='loadProfile(" + requestsArray[i].registerId + ")'> <b>" + requestsArray[i].fName + " " + requestsArray[i].lName + "</b> </div> <br>" +
                                 "<b>Job:</b> " + requestsArray[i].jobTitle + "<br>" +
                                 "<b>Expertise</b>: " + requestsArray[i].expertise + "<br>" +
                                 "</div>" +
@@ -531,7 +536,14 @@
                 }
             });
         }
-            
+
+
+        //load someone elses profile
+        function loadProfile(userId) {
+
+            localStorage.setItem("otherProfileId", userId);
+            window.location.assign("./otherProfiles.html");
+        }
 
         
 
@@ -605,7 +617,7 @@
                                         "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
                                         "<div class='requestMentorBar'>" +
                                         "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
-                                        "<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId + "';'>Request Mentor</button>" +
+                                        //"<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId + "';'>Request Mentor</button>" +
                                         //”<div class=’popup onclick=’myFunction()”+”EMAIL”+”<span class=’popuptext’ id=’myPopup’>”+”Popup Text…”+”</span>”+”</div>”+
                                         "<button type=button onclick='myFunction()' class = 'popup'>EMAIL" + "</button >" + "<div class='popuptext' id=' myPopup'> " + "Popup text…" + "</div>" +
                                         "</div>" +
@@ -660,7 +672,7 @@
                                         "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
                                         "<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId + "';'>Request Mentor</button>" +
                                         //”<div class=’popup onclick=’myFunction()”+”EMAIL”+”<span class=’popuptext’ id=’myPopup’>”+”Popup Text…”+”</span>”+”</div>”+
-                                        "<button type=button onclick='myFunction()' class = 'popup'>EMAIL" + "</button >" + "<div class='popuptext' id=' myPopup'> " + "Popup text…" + "</div>" +
+                                        //"<button type=button onclick='myFunction()' class = 'popup'>EMAIL" + "</button >" + "<div class='popuptext' id=' myPopup'> " + "Popup text…" + "</div>" +
                                         "</div>" +
                                         "</div>" +
                                         "<hr>";

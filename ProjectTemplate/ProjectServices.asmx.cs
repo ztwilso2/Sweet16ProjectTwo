@@ -780,6 +780,7 @@ namespace ProjectTemplate
                         companyName = sqlDt.Rows[i]["companyName"].ToString(),
                         jobTitle = sqlDt.Rows[i]["jobTitle"].ToString(),
                         expertise = sqlDt.Rows[i]["expertise"].ToString(),
+                        email = sqlDt.Rows[i]["email"].ToString(),
                         image = sqlDt.Rows[i]["image"].ToString()
                     });
                 }

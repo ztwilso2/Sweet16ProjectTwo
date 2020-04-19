@@ -68,6 +68,34 @@ body {
     background-color: #f4f4f4;
 }
 
+.currentNameBar {
+    cursor: pointer;
+}
+
+/*Mentee Page*/
+.currentMentorsDiv {
+    float: left;
+    
+}
+
+.mentorListDiv {
+    float: left;
+    width: 66%;
+}
+
+/*Mentor Mentee Page*/
+
+.mentorSideDiv {
+    float: left;
+    width: 33%;
+}
+
+.menteeSideDiv {
+    float: left;
+    width: 66%;
+}
+
+
 /*global and can be out anywhere*/
 .container {
     width: 80%;
@@ -216,6 +244,8 @@ section:after {
     display: table;
     clear: both;
 }*/
+
+
 /*Profile*/
 .oval {
     height: 240px;

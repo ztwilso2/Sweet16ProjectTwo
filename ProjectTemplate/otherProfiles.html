@@ -10,7 +10,7 @@
 
         function printProfile() {
             var webMethod = "ProjectServices.asmx/PersonalInfo";
-            var uid = localStorage.getItem("sessionId");
+            var uid = localStorage.getItem("otherProfileId");
             var parameters = "{\"sessionId\":\"" + encodeURI(uid) + "\"}";
 
             $.ajax({
@@ -33,6 +33,7 @@
                                 "Company Name: " + profileArray[i].companyName + "<br>" +
                                 "Job Title: " + profileArray[i].jobTitle + "<br>" +
                                 "Expertise: " + profileArray[i].expertise + "<br>" +
+                                "Email: " + profileArray[i].email + "<br>" +
                                 "</div>" +
                                 "<hr>"
 
@@ -42,7 +43,6 @@
                 }
             })
         }
-
 
         function LogOff() {
 
@@ -68,7 +68,6 @@
                 }
             });
         }
-
 
         function goToLogOn() {
             window.location.assign("./loginPage.html")
