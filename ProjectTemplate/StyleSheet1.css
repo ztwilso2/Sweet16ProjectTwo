@@ -91,12 +91,14 @@ body {
 /*Mentee Page*/
 .currentMentorsDiv {
     float: left;
-    
+    width: 33%;
+    color: #4d4d4d;
 }
 
 .mentorListDiv {
     float: left;
     width: 66%;
+    color: #4d4d4d;
 }
 
 /*Mentor Mentee Page*/
