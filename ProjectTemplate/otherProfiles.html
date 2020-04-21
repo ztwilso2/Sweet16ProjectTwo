@@ -7,7 +7,7 @@
     
 
 </head>
-<body onload="printProfile()">
+<body id="otherProfileBody" onload="printProfile()">
     <header>
         <div class="header">
             <h1>MentorMe</h1>
@@ -34,8 +34,9 @@
     <div id="printProfile">
 
     </div>
-    <input type="button" value="Send Message" onclick="window.open('./messagingPage.html','_blank','height=500px','width=500px')" />
-
+    <div id="messageButtonDiv">
+        <input type="button" value="Send Message" id="messageButton" onclick="window.open('./messagingPage.html','_blank','height=500px','width=500px')" />
+    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
@@ -68,7 +69,7 @@
                                 "Expertise: " + profileArray[i].expertise + "<br>" +
                                 "Email: " + profileArray[i].email + "<br>" +
                                 "</div>" +
-                                "<hr>"
+                                "<hr>";
 
                             $("#printProfile").append(event);
                         }

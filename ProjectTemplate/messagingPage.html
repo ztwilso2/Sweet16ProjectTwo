@@ -19,12 +19,16 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
 
+
+        document.addEventListener("load", loadMessages());
+
         function loadMessages() {
 
             var webMethod = "ProjectServices.asmx/LoadMessages";
-            var parameters = "{\"senderId\":\"" + encodeURI(fromId) + "\",\"receiverId\":\"" + encodeURI(toId) + "\"}";
             var fromId = localStorage.getItem("sessionId");
             var toId = localStorage.getItem("otherProfileId");
+            var parameters = "{\"senderId\":\"" + encodeURI(fromId) + "\",\"receiverId\":\"" + encodeURI(toId) + "\"}";
+            
 
 
             $.ajax({
@@ -35,8 +39,7 @@
                 dataType: "json",
                 success: function (msg) {
 
-                    $(".currentMentees").empty()
-
+                    
                     if (msg.d.length > 0) {
 
                         messageArray = msg.d;
@@ -47,14 +50,14 @@
                             if (messageArray[i].fromId == fromId) {
                                 
                                 var message = "<div class='senderMessageCard'>" +
-                                    "<div class='messageNameBar'> <b>" + messageArray[i].fName + " " + messageArray[i].lName + ": </b> </div> <br>" +
+                                    "<div class='messageNameBar'> <b>" + messageArray[i].fName + " " + messageArray[i].lName + ": </b> </div>" +
                                     messageArray[i].message +
                                     "</div>";
                             }
                             else {
 
-                                var message = "<div class='recieverMessageCard'>" +
-                                    "<div class='messageNameBar'> <b>" + messageArray[i].fName + " " + messageArray[i].lName + ": </b> </div> <br>" +
+                                var message = "<div class='receiverMessageCard'>" +
+                                    "<div class='messageNameBar'> <b>" + messageArray[i].fName + " " + messageArray[i].lName + ": </b> </div>" +
                                     messageArray[i].message +
                                     "</div>";
                             }
@@ -77,11 +80,12 @@
 
 
             var webMethod = "ProjectServices.asmx/SendDirectMessage";
-            var parameters = "{\"fromId\":\"" + encodeURI(fromId) + "\",\"toId\":\"" + encodeURI(toId) + "\",\"message\":\"" + encodeURI(message) + "\"}";
             var fromId = localStorage.getItem("sessionId");
             var toId = localStorage.getItem("otherProfileId");
             var message = $("#message").val();
 
+            var parameters = "{\"fromId\":\"" + encodeURI(fromId) + "\",\"toId\":\"" + encodeURI(toId) + "\",\"message\":\"" + encodeURI(message) + "\"}";
+            
             
             $.ajax({
                 

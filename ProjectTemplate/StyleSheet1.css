@@ -273,3 +273,37 @@ section:after {
     height:40px;
     width: 80px;
 }
+
+#messageButtonDiv {
+    text-align: center;
+}
+
+
+#messageButton {
+    
+    display: inline-block;
+    height: 5vh;
+    width: 15vw;
+}
+
+.senderMessageCard {
+    color: white;
+    background: #204051;
+    border: 1px solid white;
+    overflow: auto;
+    clear: both;
+    float: left;
+    padding: 5px;
+    margin: 5px;
+}
+
+.receiverMessageCard {
+    color: white;
+    background: #204051;
+    border: 1px solid white;
+    overflow: auto;
+    clear: both;
+    float: right;
+    padding: 5px;
+    margin: 5px;
+}
