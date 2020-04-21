@@ -837,6 +837,62 @@ namespace ProjectTemplate
             
         }
 
+
+        //LOAD MESSAGES
+        [WebMethod(EnableSession = true)]
+        public Message[] LoadMessages(string senderId, string receiverId)
+        {
+
+            //WE ONLY SHARE Events WITH LOGGED IN USERS!
+            if (Session["id"] != null)
+            {
+                DataTable sqlDt = new DataTable("register2");
+
+                string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+                string sqlSelect = "select fName, lName, fromId, messages, date from register2 " +
+                                    "JOIN messageBoard on idregister2 = fromId " +
+                                    "where(fromId = @fromValue and toId = @toValue) or (fromId = @toValue and toId = @fromValue) " +
+                                    "Order by idmessageBoard;";
+
+
+                MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+                MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+                sqlCommand.Parameters.AddWithValue("@fromValue", Convert.ToInt32(HttpUtility.UrlDecode(senderId)));
+                sqlCommand.Parameters.AddWithValue("@toValue", Convert.ToInt32(HttpUtility.UrlDecode(receiverId)));
+                //gonna use this to fill a data table
+                MySqlDataAdapter sqlDa = new MySqlDataAdapter(sqlCommand);
+                //filling the data table
+                sqlDa.Fill(sqlDt);
+
+                //loop through each row in the dataset, creating instances
+                //of our container class Event.  Fill each eveny with
+                //data from the rows, then dump them in a list.
+                List<Message> messages = new List<Message>();
+                for (int i = 0; i < sqlDt.Rows.Count; i++)
+                {
+
+                    messages.Add(new Message
+                    {
+                        fName = sqlDt.Rows[i]["fName"].ToString(),
+                        lName = sqlDt.Rows[i]["lName"].ToString(),
+                        fromId = Convert.ToInt32(sqlDt.Rows[i]["fromId"]),
+                        message = sqlDt.Rows[i]["messages"].ToString(),
+                        date = sqlDt.Rows[i]["date"].ToString(),
+
+                    });
+                }
+
+                //convert the list of events to an array and return!
+                return messages.ToArray();
+            }
+            else
+            {
+                //if they're not logged in, return an empty event
+                return new Message[0];
+            }
+        }
+
     }
 
 }

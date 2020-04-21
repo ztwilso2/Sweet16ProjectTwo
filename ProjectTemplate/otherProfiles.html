@@ -4,6 +4,38 @@
     <meta charset="utf-8" />
     <title>MentorMe</title>
     <link rel="stylesheet" type="text/css" href="StyleSheet1.css">
+    
+
+</head>
+<body onload="printProfile()">
+    <header>
+        <div class="header">
+            <h1>MentorMe</h1>
+            <p>Mentoring for Professionals Everywhere</p>
+            <nav>
+                <ul>
+                    <li onclick="LogOff()"><a href="">Logout</a></li>
+                    <li><a href="homepage.html">Home</a></li>
+                    <li><a href="profile.html">Profile</a></li>
+                    <!--<li></li>-->
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="oval" id="profilePicture">
+        <h3>Profile Picture</h3>
+        <form id="form1" runat="server">
+            <asp:FileUpload id="FileUploadControl" runat="server" />
+            <asp:Button runat="server" id="UploadButton" text="Upload" onclick="UploadButton_Click" />
+            <br /><br />
+            <asp:Label runat="server" id="StatusLabel" text="Upload status: " />
+        </form>
+    </div>
+    <div id="printProfile">
+
+    </div>
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script type="text/javascript">
@@ -74,35 +106,5 @@
         }
 
     </script>
-
-    </head>
-<body onload="printProfile()">
-    <header>
-        <div class="header">
-            <h1>MentorMe</h1>
-            <p>Mentoring for Professionals Everywhere</p>
-            <nav>
-                <ul>
-                    <li onclick="LogOff()"><a href="">Logout</a></li>
-                    <li><a href="homepage.html">Home</a></li>
-                    <li><a href="profile.html">Profile</a></li>
-                    <!--<li></li>-->
-                </ul>
-            </nav>
-        </div>
-    </header>
-    <div class="oval" id="profilePicture">
-        <h3>Profile Picture</h3>
-        <form id="form1" runat="server">
-            <asp:FileUpload id="FileUploadControl" runat="server" />
-            <asp:Button runat="server" id="UploadButton" text="Upload" onclick="UploadButton_Click" />
-            <br /><br />
-            <asp:Label runat="server" id="StatusLabel" text="Upload status: " />
-        </form>
-    </div>
-    <div id="printProfile">
-
-    </div>
-
 </body>
 </html>

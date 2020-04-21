@@ -5,12 +5,12 @@ using System.Web;
 
 namespace ProjectTemplate
 {
-    public class Class1
+    public class Message
     {
-        public int messageId;
+        public string fName;
+        public string lName;
         public int fromId;
-        public int toId;
         public string message;
-        public DateTime date;
+        public string date;
     }
 }
