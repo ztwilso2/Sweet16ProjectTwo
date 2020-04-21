@@ -75,10 +75,10 @@
                     <h2>Available Mentors</h2>
 
                     <form class="mentorFilter">
-                        <select id="menteeJobTitleFilter">
+                        <select id="bothJobTitleFilter">
                             <option value="default">--</option>
                         </select>
-                        <select id="menteeExpertiseFilter">
+                        <select id="bothExpertiseFilter">
                             <option value="default">--</option>
                         </select>
                         <button type="button" onclick="loadFilteredMentors()">Filter</button>
@@ -94,8 +94,6 @@
 
     <section id="menteeLayout">
         
-        <div class="mentorsDiv">
-
             <div class="currentMentorsDiv">
                 <h2>Current Mentors</h2>
                 <div class="currentMentors">
@@ -120,8 +118,7 @@
 
                 </div>
             </div>
-        </div>
-
+        
     </section>
 
     <footer>
@@ -617,9 +614,9 @@
                                         "<b>Expertise</b>: " + profilesArray[i].expertise + "<br>" +
                                         "<div class='requestMentorBar'>" +
                                         "<div class='menteeCount'>" + "Current Mentees: " + profilesArray[i].numOfMentees + "/3</div>" +
-                                        //"<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId + "';'>Request Mentor</button>" +
+                                        "<button type=button class='requestButton' value='" + profilesArray[i].registerId + "' onclick='requestMentor(this.value)' id='button" + profilesArray[i].registerId + "';'>Request Mentor</button>" +
                                         //”<div class=’popup onclick=’myFunction()”+”EMAIL”+”<span class=’popuptext’ id=’myPopup’>”+”Popup Text…”+”</span>”+”</div>”+
-                                        "<button type=button onclick='myFunction()' class = 'popup'>EMAIL" + "</button >" + "<div class='popuptext' id=' myPopup'> " + "Popup text…" + "</div>" +
+                                        //"<button type=button onclick='myFunction()' class = 'popup'>EMAIL" + "</button >" + "<div class='popuptext' id=' myPopup'> " + "Popup text…" + "</div>" +
                                         "</div>" +
                                         "</div>" +
                                         "<hr>";

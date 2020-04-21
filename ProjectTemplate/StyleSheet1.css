@@ -73,8 +73,10 @@ body {
 }
 
 /*Mentee Page*/
+
 .currentMentorsDiv {
     float: left;
+    width: 33%;
     
 }
 
@@ -243,7 +245,7 @@ section:after {
     content: "";
     display: table;
     clear: both;
-}*/
+}
 
 
 /*Profile*/

@@ -283,7 +283,7 @@ namespace ProjectTemplate
                 sessionId = HttpUtility.UrlDecode(sessionId);
                 jobTitle = HttpUtility.UrlDecode(jobTitle);
                 expertise = HttpUtility.UrlDecode(expertise);
-                string sqlSelect = "";
+                string sqlSelect = "select * from register2 where (programStatus = 'mentor' or programStatus = 'mentorMentee') and companyName = (select companyName from register2 where idregister2 = @idRegisterValue);";
 
                 if (jobTitle != "default" && expertise != "default")
                 {
@@ -794,50 +794,49 @@ namespace ProjectTemplate
             }
         }
 
-                
-        //protected void UploadButton_Click(object sender, EventArgs e)
-        //{
-        //    if (FileUploadControl.HasFile)
-        //    {
-        //        try
-        //        {
-        //            string filename = Path.GetFileName(FileUploadControl.FileName);
-        //            FileUploadControl.SaveAs(Server.MapPath("~/") + filename);
-        //            StatusLabel.Text = "Upload status: File uploaded!";
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            StatusLabel.Text = "Upload status: The file could not be uploaded. The following error occured: " + ex.Message;
-        //        }
-        //    }
-        //}
 
-        // WEBSERVICE TO SEND A MESSAGE
-        //[WebMethod(EnableSession = true)]
-        //public string SendMessage(string idmessageBoard, string message, string date)
-        //{
-        //    If(Session[“id”] != null)
-        //        DataTable sqlDt = new DataTable("messageBoard");
-        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-        //        String sqlSelect = “select * from messages, date";
-        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
-        // }
+        //Insert New Message//
+        [WebMethod(EnableSession = true)]
+        public bool SendDirectMessage (string fromId, string toId, string message)
+        {
+    
+    
+            string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
+            //the only thing fancy about this query is SELECT LAST_INSERT_ID() at the end.  All that
+            //does is tell mySql server to return the primary key of the last inserted row.
+            string sqlSelect = "insert into messageBoard (fromId, toId, messages, date)" +
+                                "values(@fromId, @toId, @message, curdate()); SELECT LAST_INSERT_ID();";
 
-        // WEBSERVICE TO SEE CHAT HISTORY (SHOWS LAST 10 MESSAGES)
-        //[WebMethod(EnableSession = true)]
-        //public string GetChatHistory(string idmessageBoard, string message,from)
-        //{
-        //    If(Session[“id”] != null)
-        //        DataTable sqlDt = new DataTable("messageBoard");
-        //        string sqlConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["sweet16"].ConnectionString;
-        //        String sqlSelect = “select * from ";
-        //        MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
-        //        MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
-        // }
+            MySqlConnection sqlConnection = new MySqlConnection(sqlConnectString);
+            MySqlCommand sqlCommand = new MySqlCommand(sqlSelect, sqlConnection);
+
+            //sqlCommand.Parameters.AddWithValue("@idRegister2Value", HttpUtility.UrlDecode(idRegister2));
+            sqlCommand.Parameters.AddWithValue("@fromId", Convert.ToInt32(HttpUtility.UrlDecode(fromId)));
+            sqlCommand.Parameters.AddWithValue("@toId", Convert.ToInt32(HttpUtility.UrlDecode(toId)));
+            sqlCommand.Parameters.AddWithValue("@message", HttpUtility.UrlDecode(message));
+            
+
+            //this time, we're not using a data adapter to fill a data table.  We're just
+            //opening the connection, telling our command to "executescalar" which says basically
+            //execute the query and just hand me back the number the query returns (the ID, remember?).
+            //don't forget to close the connection!
+            sqlConnection.Open();
+            //we're using a try/catch so that if the query errors out we can handle it gracefully
+            //by closing the connection and moving on
+            try
+            {
+                int accountID = Convert.ToInt32(sqlCommand.ExecuteScalar());
+                sqlConnection.Close();
+                return true;
+            }
+            catch (Exception e)
+            {
+                sqlConnection.Close();
+                return false;
+            }
+            
+        }
 
     }
 
 }
-
-
