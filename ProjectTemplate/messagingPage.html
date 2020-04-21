@@ -2,9 +2,114 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>MentorMe</title>
+    <link rel="stylesheet" type="text/css" href="StyleSheet1.css">
 </head>
 <body>
 
+    <div id="messageDiv">
+        
+    </div>
+    <form id="inputBox">
+        <input type="text" placeholder="Send a message" maxlength="144" id="message" />
+        <button type="submit" id="messageSend" onclick="sendMessages()"> Send </button>
+    </form>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+
+        function loadMessages() {
+
+            var webMethod = "ProjectServices.asmx/LoadMessages";
+            var parameters = "{\"senderId\":\"" + encodeURI(fromId) + "\",\"receiverId\":\"" + encodeURI(toId) + "\"}";
+            var fromId = localStorage.getItem("sessionId");
+            var toId = localStorage.getItem("otherProfileId");
+
+
+            $.ajax({
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+
+                    $(".currentMentees").empty()
+
+                    if (msg.d.length > 0) {
+
+                        messageArray = msg.d;
+
+                        
+                        for (var i = 0; i < messageArray.length; i++) {
+
+                            if (messageArray[i].fromId == fromId) {
+                                
+                                var message = "<div class='senderMessageCard'>" +
+                                    "<div class='messageNameBar'> <b>" + messageArray[i].fName + " " + messageArray[i].lName + ": </b> </div> <br>" +
+                                    messageArray[i].message +
+                                    "</div>";
+                            }
+                            else {
+
+                                var message = "<div class='recieverMessageCard'>" +
+                                    "<div class='messageNameBar'> <b>" + messageArray[i].fName + " " + messageArray[i].lName + ": </b> </div> <br>" +
+                                    messageArray[i].message +
+                                    "</div>";
+                            }
+
+
+                            $("#messageDiv").append(message);
+
+
+                        }
+
+                    }
+                },
+                error: function (e) {
+                    alert("Can't load messages." + e);
+                }
+            });
+        }
+
+        function sendMessages(){
+
+
+            var webMethod = "ProjectServices.asmx/SendDirectMessage";
+            var parameters = "{\"fromId\":\"" + encodeURI(fromId) + "\",\"toId\":\"" + encodeURI(toId) + "\",\"message\":\"" + encodeURI(message) + "\"}";
+            var fromId = localStorage.getItem("sessionId");
+            var toId = localStorage.getItem("otherProfileId");
+            var message = $("#message").val();
+
+            
+            $.ajax({
+                
+                type: "POST",
+                url: webMethod,
+                data: parameters,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.d) {
+
+                        alert("Request Sent");
+
+                        
+                    }
+                    else {
+                        alert("Error sending message")
+                    }
+                },
+                error: function (e) {
+                    alert("Error with the server. Please try again.");
+                }
+            });
+            
+        }
+
+
+
+    </script>
 </body>
 </html>

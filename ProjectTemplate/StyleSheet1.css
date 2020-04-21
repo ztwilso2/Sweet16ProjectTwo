@@ -407,3 +407,25 @@ section:after {
     list-style-type:none;
 }
 
+
+
+/*MESSAGING PAGE*/
+
+#messageDiv{
+    overflow: scroll;
+    height:85vh;
+}
+
+#inputBox{
+    height:15vh;
+}
+
+#message{
+    width:80%;
+    height:100%;
+}
+
+#messageSend{
+    height:40px;
+    width: 80px;
+}

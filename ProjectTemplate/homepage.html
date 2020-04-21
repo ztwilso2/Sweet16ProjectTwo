@@ -267,7 +267,7 @@
             var parameters = "{\"mentorId\":\"" + encodeURI(mentorId) + "\",\"menteeId\":\"" + encodeURI(menteeId) + "\"}";
             if ($("#button" + mentorId).prop('disabled') == false) {
                 $.ajax({
-                    async: false,
+                    
                     type: "POST",
                     url: webMethod,
                     data: parameters,
@@ -350,7 +350,7 @@
             var parameters = "{\"mentorId\":\"" + encodeURI(mentorId) + "\",\"requestId\":\"" + encodeURI(requestId) + "\"}";
 
             $.ajax({
-                async: false,
+                
                 type: "POST",
                 url: webMethod,
                 data: parameters,
@@ -384,7 +384,7 @@
             var parameters = "{\"mentorId\":\"" + encodeURI(mentorId) + "\",\"requestId\":\"" + encodeURI(requestId) + "\"}";
 
             $.ajax({
-                async: false,
+                
                 type: "POST",
                 url: webMethod,
                 data: parameters,
@@ -423,7 +423,7 @@
             var parameters2 = "{\"userId\":\"" + encodeURI(mentorId) + "\",\"menteeCount\":\"" + encodeURI(menteeCount) + "\"}";
 
             $.ajax({
-                async: false,
+                
                 type: "POST",
                 url: webMethod2,
                 data: parameters2,
